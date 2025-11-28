@@ -1,4 +1,4 @@
-package com.example.ideaservice.entities;
+package com.example.ideaservice.Model.entities;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -13,6 +13,6 @@ public class Idea {
 
     private String title;
     private String description;
-    private String status; // SUBMITTED, APPROVED, REJECTED, PROJECT
-    private Long userId;   // l’auteur (envoyé par UserService)
+    private String status;
+    private Long userId;
 }
