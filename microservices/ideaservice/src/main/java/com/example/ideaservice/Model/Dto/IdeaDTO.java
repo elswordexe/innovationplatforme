@@ -1,9 +1,11 @@
 package com.example.ideaservice.Model.Dto;
 
 
+import com.example.ideaservice.Model.entities.Attachment;
 import com.example.ideaservice.Model.enums.IdeaStatus;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -21,12 +23,12 @@ public class IdeaDTO {
     private String creatorName;
     private Long organizationId;
     private String organizationName;
-    private Date creationDate;
+    private LocalDateTime creationDate;
     private IdeaStatus status;
     private Integer totalScore;
     private Boolean budgetApproved;
     private List<Long> assignedTeamIds;
-    private List<AttachmentDTO> attachments;
+    private List<Attachment> attachments;
     private Integer voteCount;
     private Boolean isInTop10;
 }

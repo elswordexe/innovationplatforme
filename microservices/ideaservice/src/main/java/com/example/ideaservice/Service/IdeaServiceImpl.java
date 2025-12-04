@@ -30,10 +30,6 @@ public class IdeaServiceImpl implements IdeaService {
     private final IdeaRepository ideaRepository;
     private final IdeaMapper ideaMapper;
 
-    // ============================
-    // CRUD Operations
-    // ============================
-
     @Override
     public IdeaDTO createIdea(IdeaCreateRequest request, Long creatorId) {
         log.info("Creating new idea with title: {} for creator: {}", request.getTitle(), creatorId);
@@ -41,11 +37,10 @@ public class IdeaServiceImpl implements IdeaService {
         Idea idea = ideaMapper.toEntity(request);
         idea.setCreatorId(creatorId);
 
-        // Si organizationId n'est pas fourni, on peut le récupérer via User Service plus tard
+
         if (request.getOrganizationId() != null) {
             idea.setOrganizationId(request.getOrganizationId());
         } else {
-            // Pour les tests, mettre une valeur par défaut
             idea.setOrganizationId(1L);
         }
 
@@ -83,13 +78,9 @@ public class IdeaServiceImpl implements IdeaService {
 
         Idea idea = ideaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Idea not found with id: " + id));
-
-        // Vérifier si l'idée peut être modifiée
         if (idea.getStatus() != IdeaStatus.DRAFT) {
             throw new BadRequestException("Only ideas in DRAFT status can be modified");
         }
-
-        // Mettre à jour les champs modifiables
         if (request.getTitle() != null) {
             idea.setTitle(request.getTitle());
         }
@@ -110,7 +101,6 @@ public class IdeaServiceImpl implements IdeaService {
         Idea idea = ideaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Idea not found with id: " + id));
 
-        // Vérifier si l'idée peut être supprimée
         if (idea.getStatus() != IdeaStatus.DRAFT) {
             throw new BadRequestException("Only ideas in DRAFT status can be deleted");
         }
@@ -118,11 +108,6 @@ public class IdeaServiceImpl implements IdeaService {
         ideaRepository.delete(idea);
         log.info("Idea deleted successfully with id: {}", id);
     }
-
-    // ============================
-    // Status Management
-    // ============================
-
     @Override
     public IdeaDTO submitIdea(Long id) throws ResourceNotFoundException {
         log.info("Submitting idea with id: {}", id);
@@ -139,9 +124,6 @@ public class IdeaServiceImpl implements IdeaService {
 
         log.info("Idea submitted successfully with id: {}", id);
 
-        // TODO: Déclencher le workflow d'approbation via WorkflowService
-        // TODO: Envoyer une notification via NotificationService
-
         return ideaMapper.toDTO(updatedIdea);
     }
 
@@ -151,8 +133,6 @@ public class IdeaServiceImpl implements IdeaService {
 
         Idea idea = ideaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Idea not found with id: " + id));
-
-        // Valider les transitions de statut
         validateStatusTransition(idea.getStatus(), newStatus);
 
         idea.setStatus(newStatus);
@@ -162,10 +142,6 @@ public class IdeaServiceImpl implements IdeaService {
 
         return ideaMapper.toDTO(updatedIdea);
     }
-
-    // ============================
-    // Filtering and Search
-    // ============================
 
     @Override
     @Transactional
@@ -203,10 +179,6 @@ public class IdeaServiceImpl implements IdeaService {
         return ideas.map(ideaMapper::toDTO);
     }
 
-    // ============================
-    // Top Ideas
-    // ============================
-
     @Override
     @Transactional
     public List<IdeaDTO> getTop10Ideas() {
@@ -219,10 +191,6 @@ public class IdeaServiceImpl implements IdeaService {
                 .map(ideaMapper::toDTO)
                 .collect(Collectors.toList());
     }
-
-    // ============================
-    // Budget Management
-    // ============================
 
     @Override
     public IdeaDTO approveBudget(Long id) throws ResourceNotFoundException {
@@ -240,7 +208,6 @@ public class IdeaServiceImpl implements IdeaService {
 
         log.info("Budget approved for idea: {}", id);
 
-        // TODO: Envoyer notification via NotificationService
 
         return ideaMapper.toDTO(updatedIdea);
     }
@@ -260,10 +227,6 @@ public class IdeaServiceImpl implements IdeaService {
         return ideaMapper.toDTO(updatedIdea);
     }
 
-    // ============================
-    // Team Management
-    // ============================
-
     @Override
     public IdeaDTO addTeamMember(Long ideaId, Long userId) throws ResourceNotFoundException {
         log.info("Adding user {} to idea {} team", userId, ideaId);
@@ -280,8 +243,6 @@ public class IdeaServiceImpl implements IdeaService {
         }
 
         idea.addTeamMember(userId);
-
-        // Changer le statut si nécessaire
         if (idea.getStatus() == IdeaStatus.APPROVED) {
             idea.setStatus(IdeaStatus.ASSIGNING_TEAM);
         }
@@ -289,9 +250,6 @@ public class IdeaServiceImpl implements IdeaService {
         Idea updatedIdea = ideaRepository.save(idea);
 
         log.info("User {} added to idea {} team", userId, ideaId);
-
-        // TODO: Créer l'entrée TeamAssignment via TeamService
-        // TODO: Envoyer notification via NotificationService
 
         return ideaMapper.toDTO(updatedIdea);
     }
@@ -326,12 +284,8 @@ public class IdeaServiceImpl implements IdeaService {
         return idea.getAssignedTeam();
     }
 
-    // ============================
-    // Private Helper Methods
-    // ============================
 
     private void validateStatusTransition(IdeaStatus currentStatus, IdeaStatus newStatus) {
-        // Définir les transitions valides
         boolean isValidTransition = false;
 
         switch (currentStatus) {
@@ -357,7 +311,7 @@ public class IdeaServiceImpl implements IdeaService {
                 break;
             case COMPLETED:
             case REJECTED:
-                isValidTransition = false; // États finaux
+                isValidTransition = false;
                 break;
         }
 

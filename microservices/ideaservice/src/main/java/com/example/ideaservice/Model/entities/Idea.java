@@ -3,6 +3,8 @@ package com.example.ideaservice.Model.entities;
 import com.example.ideaservice.Model.enums.IdeaStatus;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -23,7 +25,7 @@ public class Idea {
     private String description;
     private Long creatorId;
     private Long organizationId;
-    private Date creationDate;
+    private LocalDateTime creationDate;
     private IdeaStatus status = IdeaStatus.DRAFT;
     private Integer totalScore = 0;
     private Boolean budgetApproved = false;
