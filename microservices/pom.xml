@@ -23,7 +23,7 @@
         <module>userservice</module>
         <module>ideaservice</module>
         <module>voteservice</module>
-
+        <module>workflowservice</module>
     </modules>
 
     <properties>
