@@ -8,5 +8,6 @@
     <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/userservice/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/voteservice/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/workflowservice/src/main/java" charset="UTF-8" />
   </component>
 </project>
