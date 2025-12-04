@@ -81,7 +81,7 @@ public class IdeaCrudController {
             @Parameter(description = "ID de l'idée", required = true, example = "1")
             @PathVariable Long id,
             @Valid @RequestBody IdeaUpdateRequest request,
-            @RequestHeader(value = "X-User-Id", required = false) Long userId) throws ResourceNotFoundException {
+            @RequestHeader(value = "User-Id", required = false) Long userId) throws ResourceNotFoundException {
         return ResponseEntity.ok(ideaService.updateIdea(id, request));
     }
 
