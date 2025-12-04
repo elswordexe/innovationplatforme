@@ -13,7 +13,7 @@ import java.util.List;
 public interface IdeaService {
     IdeaDTO createIdea(IdeaCreateRequest request, Long creatorId);
     IdeaDTO getIdeaById(Long id) throws ResourceNotFoundException;
-    Page<IdeaDTO> getAllIdeas(Pageable pageable);
+    List<IdeaDTO> getAllIdeas();
     IdeaDTO updateIdea(Long id, IdeaUpdateRequest request) throws ResourceNotFoundException;
     void deleteIdea(Long id) throws ResourceNotFoundException;
     IdeaDTO submitIdea(Long id) throws ResourceNotFoundException;

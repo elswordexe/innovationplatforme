@@ -21,6 +21,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/ideas")
 @RequiredArgsConstructor
@@ -58,15 +60,13 @@ public class IdeaCrudController {
     }
 
     @GetMapping
-    @Operation(summary = "Récupérer toutes les idées", description = "Retourne une liste paginée de toutes les idées")
+    @Operation(summary = "Récupérer toutes les idées", description = "Retourne une liste de toutes les idées")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Liste des idées récupérée avec succès",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Page.class)))
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = List.class)))
     })
-    public ResponseEntity<Page<IdeaDTO>> getAllIdeas(
-            @Parameter(description = "Paramètres de pagination")
-            @PageableDefault(size = 20, sort = "creationDate") Pageable pageable) {
-        return ResponseEntity.ok(ideaService.getAllIdeas(pageable));
+    public ResponseEntity<List<IdeaDTO>> getAllIdeas() {
+        return ResponseEntity.ok(ideaService.getAllIdeas());
     }
 
     @PutMapping("/{id}")

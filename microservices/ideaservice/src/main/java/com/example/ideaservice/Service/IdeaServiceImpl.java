@@ -63,12 +63,9 @@ public class IdeaServiceImpl implements IdeaService {
 
     @Override
     @Transactional
-    public Page<IdeaDTO> getAllIdeas(Pageable pageable) {
-        log.info("Fetching all ideas with pagination: page={}, size={}",
-                pageable.getPageNumber(), pageable.getPageSize());
-
-        Page<Idea> ideas = ideaRepository.findAll(pageable);
-        return ideas.map(ideaMapper::toDTO);
+    public List<IdeaDTO> getAllIdeas() {
+        List<Idea> ideas = ideaRepository.findAll();
+        return ideaMapper.toDTOList(ideas);
     }
 
 
