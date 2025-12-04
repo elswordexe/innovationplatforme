@@ -14,13 +14,13 @@ import java.util.List;
 @Repository
 public interface IdeaRepository extends JpaRepository<Idea, Long> {
 
-    Page<Idea> findByStatus(IdeaStatus status, Pageable pageable);
-    Page<Idea> findByCreatorId(Long creatorId, Pageable pageable);
-    Page<Idea> findByOrganizationId(Long organizationId, Pageable pageable);
+    List<Idea> findByStatus(IdeaStatus status);
+    List<Idea> findByCreatorId(Long creatorId);
+    List<Idea> findByOrganizationId(Long organizationId);
     @Query("SELECT i FROM Idea i WHERE " +
             "LOWER(i.title) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
             "LOWER(i.description) LIKE LOWER(CONCAT('%', :keyword, '%'))")
-    Page<Idea> searchByKeyword(@Param("keyword") String keyword, Pageable pageable);
+    List<Idea> searchByKeyword(@Param("keyword") String keyword);
 
     @Query("SELECT i FROM Idea i WHERE i.totalScore >= :minScore ORDER BY i.totalScore DESC")
     List<Idea> findIdeasWithMinScore(@Param("minScore") Integer minScore);

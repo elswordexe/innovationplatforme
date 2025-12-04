@@ -18,10 +18,10 @@ public interface IdeaService {
     void deleteIdea(Long id) throws ResourceNotFoundException;
     IdeaDTO submitIdea(Long id) throws ResourceNotFoundException;
     IdeaDTO changeStatus(Long id, IdeaStatus newStatus) throws ResourceNotFoundException;
-    Page<IdeaDTO> getIdeasByStatus(IdeaStatus status, Pageable pageable);
-    Page<IdeaDTO> getIdeasByCreator(Long creatorId, Pageable pageable);
-    Page<IdeaDTO> getIdeasByOrganization(Long organizationId, Pageable pageable);
-    Page<IdeaDTO> searchIdeas(String keyword, Pageable pageable);
+    List<IdeaDTO> getIdeasByStatus(IdeaStatus status);
+    List<IdeaDTO> getIdeasByCreator(Long creatorId);
+    List<IdeaDTO> getIdeasByOrganization(Long organizationId);
+    List<IdeaDTO> searchIdeas(String keyword);
     List<IdeaDTO> getTop10Ideas();
     IdeaDTO approveBudget(Long id) throws ResourceNotFoundException;
     IdeaDTO rejectBudget(Long id) throws ResourceNotFoundException;

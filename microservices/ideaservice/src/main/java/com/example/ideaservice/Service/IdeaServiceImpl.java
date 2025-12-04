@@ -142,38 +142,38 @@ public class IdeaServiceImpl implements IdeaService {
 
     @Override
     @Transactional
-    public Page<IdeaDTO> getIdeasByStatus(IdeaStatus status, Pageable pageable) {
+    public List<IdeaDTO> getIdeasByStatus(IdeaStatus status) {
         log.info("Fetching ideas with status: {}", status);
 
-        Page<Idea> ideas = ideaRepository.findByStatus(status, pageable);
-        return ideas.map(ideaMapper::toDTO);
+        List<Idea> ideas = ideaRepository.findByStatus(status);
+        return ideaMapper.toDTOList(ideas);
     }
 
     @Override
     @Transactional
-    public Page<IdeaDTO> getIdeasByCreator(Long creatorId, Pageable pageable) {
+    public List<IdeaDTO> getIdeasByCreator(Long creatorId) {
         log.info("Fetching ideas created by user: {}", creatorId);
 
-        Page<Idea> ideas = ideaRepository.findByCreatorId(creatorId, pageable);
-        return ideas.map(ideaMapper::toDTO);
+        List<Idea> ideas = ideaRepository.findByCreatorId(creatorId);
+        return ideaMapper.toDTOList(ideas);
     }
 
     @Override
     @Transactional
-    public Page<IdeaDTO> getIdeasByOrganization(Long organizationId, Pageable pageable) {
+    public List<IdeaDTO> getIdeasByOrganization(Long organizationId) {
         log.info("Fetching ideas for organization: {}", organizationId);
 
-        Page<Idea> ideas = ideaRepository.findByOrganizationId(organizationId, pageable);
-        return ideas.map(ideaMapper::toDTO);
+        List<Idea> ideas = ideaRepository.findByOrganizationId(organizationId);
+        return ideaMapper.toDTOList(ideas);
     }
 
     @Override
     @Transactional
-    public Page<IdeaDTO> searchIdeas(String keyword, Pageable pageable) {
+    public List<IdeaDTO> searchIdeas(String keyword) {
         log.info("Searching ideas with keyword: {}", keyword);
 
-        Page<Idea> ideas = ideaRepository.searchByKeyword(keyword, pageable);
-        return ideas.map(ideaMapper::toDTO);
+        List<Idea> ideas = ideaRepository.searchByKeyword(keyword);
+        return ideaMapper.toDTOList(ideas);
     }
 
     @Override
