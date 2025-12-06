@@ -18,8 +18,8 @@ public class WorkflowStep {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Idea idea;
-    private User approveur;
+    private Long ideaId;
+    private Long UserId;//li ki approuver
     private StepType stepType;
     private WorkflowStatus status;
     private Date actiondate;
