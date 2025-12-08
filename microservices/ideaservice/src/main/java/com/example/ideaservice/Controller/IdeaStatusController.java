@@ -3,7 +3,6 @@ package com.example.ideaservice.Controller;
 import com.example.ideaservice.Exceptions.ResourceNotFoundException;
 import com.example.ideaservice.Model.Dto.IdeaDTO;
 import com.example.ideaservice.Model.Dto.status.IdeaStatusUpdateRequest;
-import com.example.ideaservice.Model.enums.IdeaStatus;
 import com.example.ideaservice.Service.IdeaServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
