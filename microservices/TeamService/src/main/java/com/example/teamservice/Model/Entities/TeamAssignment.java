@@ -16,11 +16,9 @@ public class TeamAssignment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    // In a microservices architecture, we store foreign keys (IDs) instead of direct entity references
     private Long ideaId;
-    private Long userId;        // Team member assigned
-    private Long assignedById;  // Who assigned the member
+    private Long userId;
+    private Long assignedById;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date assignmentDate;
