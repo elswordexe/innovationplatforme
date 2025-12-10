@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/team-assignments")
+@RequestMapping("/api/teams")
 @RequiredArgsConstructor
 @Tag(name = "Team Assignments CRUD", description = "APIs pour la gestion des affectations d'équipe")
 @CrossOrigin(origins = "*")
