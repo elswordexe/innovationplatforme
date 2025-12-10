@@ -24,6 +24,9 @@ start cmd /k "cd voteservice && mvnw spring-boot:run"
 echo Starting Workflow Service...
 start cmd /k "cd workflowservice && mvnw spring-boot:run"
 
+echo Starting Team Service...
+start cmd /k "cd TeamService && mvnw spring-boot:run"
+
 echo ============================================
 echo   All services started in separate windows.
 echo ============================================

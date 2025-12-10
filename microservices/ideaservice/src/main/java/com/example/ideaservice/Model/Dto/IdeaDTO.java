@@ -15,7 +15,6 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class IdeaDTO {
-
     private Long id;
     private String title;
     private String description;

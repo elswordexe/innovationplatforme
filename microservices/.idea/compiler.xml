@@ -57,6 +57,16 @@
         </processorPath>
         <module name="voteservice" />
       </profile>
+      <profile name="Annotation profile for teamservice" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <option name="mapstruct.defaultComponentModel" value="spring" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.30/lombok-1.18.30.jar" />
+        </processorPath>
+        <module name="teamservice" />
+      </profile>
       <profile name="Annotation profile for microservices" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
@@ -73,6 +83,7 @@
       <module name="eureka" options="-parameters" />
       <module name="gateway" options="-parameters" />
       <module name="ideaservice" options="-parameters -Amapstruct.defaultComponentModel=spring" />
+      <module name="teamservice" options="-parameters -Amapstruct.defaultComponentModel=spring" />
       <module name="userservice" options="-parameters -Amapstruct.defaultComponentModel=spring" />
       <module name="voteservice" options="-parameters -Amapstruct.defaultComponentModel=spring" />
       <module name="workflowservice" options="-parameters -Amapstruct.defaultComponentModel=spring" />

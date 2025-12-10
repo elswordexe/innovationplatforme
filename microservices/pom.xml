@@ -24,6 +24,7 @@
         <module>ideaservice</module>
         <module>voteservice</module>
         <module>workflowservice</module>
+        <module>TeamService</module>
     </modules>
 
     <properties>
