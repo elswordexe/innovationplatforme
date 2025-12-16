@@ -74,6 +74,12 @@
             <version>2.8.13</version>
         </dependency>
 
+        <!-- Kafka Producer -->
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
+        </dependency>
+
     </dependencies>
 
     <dependencyManagement>

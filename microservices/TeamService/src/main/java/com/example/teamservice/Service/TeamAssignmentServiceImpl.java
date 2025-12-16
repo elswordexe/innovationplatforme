@@ -7,6 +7,8 @@ import com.example.teamservice.Model.Dto.TeamAssignmentUpdateRequest;
 import com.example.teamservice.Model.Entities.TeamAssignment;
 import com.example.teamservice.Repository.TeamAssignmentRepository;
 import com.example.teamservice.mapper.TeamAssignmentMapper;
+import com.example.teamservice.messaging.NotificationEvent;
+import com.example.teamservice.messaging.NotificationPublisher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,11 +20,22 @@ public class TeamAssignmentServiceImpl implements TeamAssignmentService {
 
     private final TeamAssignmentRepository repository;
     private final TeamAssignmentMapper mapper;
+    private final NotificationPublisher notificationPublisher;
 
     @Override
     public TeamAssignmentDTO create(TeamAssignmentCreateRequest request) {
         TeamAssignment toSave = mapper.toEntity(request);
         TeamAssignment saved = repository.save(toSave);
+
+       NotificationEvent event = NotificationEvent.builder()
+                .userId(saved.getUserId())
+                .type("TEAM_ASSIGNED")
+                .title("Affectation à une équipe")
+                .message("Vous avez été assigné au rôle " + saved.getRole() + " sur l'idée " + saved.getIdeaId())
+                .createdAt(java.time.Instant.now())
+                .build();
+        notificationPublisher.publish(event);
+
         return mapper.toDTO(saved);
     }
 

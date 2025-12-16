@@ -9,6 +9,8 @@ import com.example.ideaservice.Model.entities.Idea;
 import com.example.ideaservice.Model.enums.IdeaStatus;
 import com.example.ideaservice.Repository.IdeaRepository;
 import com.example.ideaservice.mapper.IdeaMapper;
+import com.example.ideaservice.messaging.NotificationEvent;
+import com.example.ideaservice.messaging.NotificationPublisher;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.BadRequestException;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +31,7 @@ public class IdeaServiceImpl implements IdeaService {
 
     private final IdeaRepository ideaRepository;
     private final IdeaMapper ideaMapper;
+    private final NotificationPublisher notificationPublisher;
 
     @Override
     public IdeaDTO createIdea(IdeaCreateRequest request, Long creatorId) {
@@ -46,6 +49,15 @@ public class IdeaServiceImpl implements IdeaService {
 
         Idea savedIdea = ideaRepository.save(idea);
         log.info("Idea created successfully with id: {}", savedIdea.getId());
+
+        NotificationEvent event = NotificationEvent.builder()
+                .userId(creatorId)
+                .type("IDEA_CREATED")
+                .title("Nouvelle idée créée")
+                .message("Votre idée '" + savedIdea.getTitle() + "' a été créée avec l'ID " + savedIdea.getId())
+                .createdAt(java.time.Instant.now())
+                .build();
+        notificationPublisher.publish(event);
 
         return ideaMapper.toDTO(savedIdea);
     }

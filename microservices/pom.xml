@@ -25,6 +25,7 @@
         <module>voteservice</module>
         <module>workflowservice</module>
         <module>TeamService</module>
+        <module>notificationservice</module>
     </modules>
 
     <properties>
