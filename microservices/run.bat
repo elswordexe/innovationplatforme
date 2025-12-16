@@ -28,7 +28,9 @@ echo Starting Team Service...
 start cmd /k "cd TeamService && mvnw spring-boot:run"
 
 echo Starting noti Service...
-start cmd /k "cd notificationservice && mvnw spring-boot:run"
+
+start cmd /k "cd notificationservice && mvn spring-boot:run"
+
 echo ============================================
 echo   All services started in separate windows.
 echo ============================================
