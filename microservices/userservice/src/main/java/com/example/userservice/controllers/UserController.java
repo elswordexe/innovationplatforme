@@ -37,7 +37,7 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "Données invalides", content = @Content)
     })
     public ResponseEntity<UserDTO> create(@Valid @RequestBody UserCreateRequest request) {
-        UserDTO created = userService.create(request);
+        UserDTO created = userService.createUser(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 

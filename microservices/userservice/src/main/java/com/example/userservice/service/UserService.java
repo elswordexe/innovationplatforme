@@ -8,7 +8,7 @@ import com.example.userservice.exceptions.ResourceNotFoundException;
 import java.util.List;
 
 public interface UserService {
-    UserDTO create(UserCreateRequest request);
+    UserDTO createUser(UserCreateRequest request);
     UserDTO getById(Long id) throws ResourceNotFoundException;
     List<UserDTO> getAll();
     UserDTO update(Long id, UserUpdateRequest request) throws ResourceNotFoundException;
