@@ -30,8 +30,10 @@ public class NotificationListener {
                     .createdAt(event.getCreatedAt())
                     .read(false)
                     .build();
-            repository.save(notification);
-            log.info("Saved notification for user {} of type {}", event.getUserId(), event.getType());
+            Notification saved = repository.save(notification);
+            log.info("Saved notification id {} for user {} of type {}", saved.getId(), event.getUserId(), event.getType());
+            long unread = repository.countByUserIdAndReadFalse(event.getUserId());
+            log.info("User {} has {} unread notifications (after save)", event.getUserId(), unread);
         } catch (Exception ex) {
             log.error("Failed to process notification event: {}", event, ex);
             throw ex;
