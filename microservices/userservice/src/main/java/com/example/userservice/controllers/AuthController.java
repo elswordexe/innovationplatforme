@@ -50,9 +50,14 @@ public class AuthController {
         );
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(request.getEmail());
-        String token = jwtService.generateToken(userDetails);
-        
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow();
+        
+        // Inclure l'ID utilisateur dans les claims
+        java.util.Map<String, Object> extraClaims = new java.util.HashMap<>();
+        extraClaims.put("userId", user.getId());
+        extraClaims.put("role", user.getRole());
+        
+        String token = jwtService.generateToken(extraClaims, userDetails);
 
         return ResponseEntity.ok(AuthResponse.builder()
                 .token(token)
