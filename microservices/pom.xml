@@ -26,6 +26,7 @@
         <module>workflowservice</module>
         <module>TeamService</module>
         <module>notificationservice</module>
+        <module>organizationservice</module>
     </modules>
 
     <properties>
