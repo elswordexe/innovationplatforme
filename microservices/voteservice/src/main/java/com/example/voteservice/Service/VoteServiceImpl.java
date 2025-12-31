@@ -22,17 +22,33 @@ public class VoteServiceImpl implements VoteService {
     }
 
     // ================= ADD =================
+//    @Override
+//    public VoteDto addVote(VoteDto dto) {
+//
+//        // Option anti double vote
+//        if (repo.existsByUserIdAndIdeaId(dto.getUserId(), dto.getIdeaId())) {
+//            throw new RuntimeException("User already voted for this idea");
+//        }
+//
+//        Vote vote = mapper.toEntity(dto);
+//        Vote savedVote = repo.save(vote);
+//        return mapper.toDto(savedVote);
+//    }
+
+
     @Override
     public VoteDto addVote(VoteDto dto) {
 
-        // Option anti double vote
+        // empêcher double vote
         if (repo.existsByUserIdAndIdeaId(dto.getUserId(), dto.getIdeaId())) {
             throw new RuntimeException("User already voted for this idea");
         }
 
-        Vote vote = mapper.toEntity(dto);
-        Vote savedVote = repo.save(vote);
-        return mapper.toDto(savedVote);
+        return mapper.toDto(
+                repo.save(
+                        mapper.toEntity(dto)
+                )
+        );
     }
 
     // ================= GET BY ID =================

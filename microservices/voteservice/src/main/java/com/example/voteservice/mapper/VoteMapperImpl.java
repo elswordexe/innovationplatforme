@@ -10,10 +10,14 @@ public class VoteMapperImpl implements VoteMapper {
     @Override
     public Vote toEntity(VoteDto dto) {
         Vote vote = new Vote();
-        vote.setId(dto.getId());
+
+        // ❌ NE JAMAIS mapper l'id en création
+        // vote.setId(dto.getId());
+
         vote.setUserId(dto.getUserId());
         vote.setIdeaId(dto.getIdeaId());
         vote.setVoteType(dto.getVoteType());
+
         return vote;
     }
 
