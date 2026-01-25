@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface VoteService {
 
-    VoteDto addVote(VoteDto dto);
+    VoteDto addVote(VoteDto dto, String actorName);
 
     VoteDto getVote(Long id);
 

@@ -51,8 +51,7 @@ public class AuthController {
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(request.getEmail());
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow();
-        
-        // Inclure l'ID utilisateur dans les claims
+
         java.util.Map<String, Object> extraClaims = new java.util.HashMap<>();
         extraClaims.put("userId", user.getId());
         extraClaims.put("role", user.getRole());

@@ -8,7 +8,7 @@ public interface BookmarkService {
 
     List<BookmarkDto> getBookmarksByUser(Long userId);
 
-    BookmarkDto addBookmark(BookmarkDto dto);
+    BookmarkDto addBookmark(BookmarkDto dto, String actorName);
 
     void removeBookmark(Long bookmarkId);
 }

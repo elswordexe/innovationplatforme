@@ -22,6 +22,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
+import feign.FeignException;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +33,7 @@ public class IdeaServiceImpl implements IdeaService {
     private final IdeaRepository ideaRepository;
     private final IdeaMapper ideaMapper;
     private final NotificationPublisher notificationPublisher;
+    private final com.example.ideaservice.client.UsersClient usersClient;
 
     @Override
     public IdeaDTO createIdea(IdeaCreateRequest request, Long creatorId) {
@@ -249,6 +251,16 @@ public class IdeaServiceImpl implements IdeaService {
 
         if (idea.isTeamMember(userId)) {
             throw new BadRequestException("User is already a team member");
+        }
+
+        // Validate user existence via Users service
+        try {
+            usersClient.getById(userId);
+        } catch (FeignException.NotFound e) {
+            throw new ResourceNotFoundException("User not found with id: " + userId);
+        } catch (FeignException e) {
+            log.error("Users service error while validating user {}: status={} content={} ", userId, e.status(), e.contentUTF8());
+            throw new BadRequestException("Unable to validate user at the moment");
         }
 
         idea.addTeamMember(userId);

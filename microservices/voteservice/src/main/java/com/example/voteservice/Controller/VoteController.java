@@ -18,8 +18,8 @@ public class VoteController {
     }
 
     @PostMapping
-    public VoteDto addVote(@RequestBody VoteDto dto) {
-        return service.addVote(dto);
+    public VoteDto addVote(@RequestBody VoteDto dto, @RequestHeader(value = "X-User-Name", required = false) String actorName) {
+        return service.addVote(dto, actorName);
     }
 
     @GetMapping("/{id}")

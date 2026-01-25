@@ -5,9 +5,13 @@ import com.example.voteservice.Model.Dto.VoteDto;
 import com.example.voteservice.Model.entities.Vote;
 import com.example.voteservice.Model.enums.VoteType;
 import com.example.voteservice.Repository.VoteRepository;
+import com.example.voteservice.client.IdeaClient;
 import com.example.voteservice.mapper.VoteMapper;
+import com.example.voteservice.messaging.NotificationEvent;
+import com.example.voteservice.messaging.NotificationPublisher;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 
 @Service
@@ -15,40 +19,55 @@ public class VoteServiceImpl implements VoteService {
 
     private final VoteRepository repo;
     private final VoteMapper mapper;
+    private final NotificationPublisher notificationPublisher;
+    private final IdeaClient ideaClient;
 
-    public VoteServiceImpl(VoteRepository repo, VoteMapper mapper) {
+    public VoteServiceImpl(VoteRepository repo, VoteMapper mapper,
+                           NotificationPublisher notificationPublisher,
+                           IdeaClient ideaClient) {
         this.repo = repo;
         this.mapper = mapper;
+        this.notificationPublisher = notificationPublisher;
+        this.ideaClient = ideaClient;
     }
 
-    // ================= ADD =================
-//    @Override
-//    public VoteDto addVote(VoteDto dto) {
-//
-//        // Option anti double vote
-//        if (repo.existsByUserIdAndIdeaId(dto.getUserId(), dto.getIdeaId())) {
-//            throw new RuntimeException("User already voted for this idea");
-//        }
-//
-//        Vote vote = mapper.toEntity(dto);
-//        Vote savedVote = repo.save(vote);
-//        return mapper.toDto(savedVote);
-//    }
-
+ 
 
     @Override
-    public VoteDto addVote(VoteDto dto) {
+    public VoteDto addVote(VoteDto dto, String actorName) {
 
         // empêcher double vote
         if (repo.existsByUserIdAndIdeaId(dto.getUserId(), dto.getIdeaId())) {
             throw new RuntimeException("User already voted for this idea");
         }
 
-        return mapper.toDto(
-                repo.save(
-                        mapper.toEntity(dto)
-                )
-        );
+        Vote saved = repo.save(mapper.toEntity(dto));
+
+        // Build and publish notification (only on add)
+        long total = repo.countByIdeaId(dto.getIdeaId());
+        Long ownerId = ideaClient.getIdeaOwnerId(dto.getIdeaId());
+        if (ownerId != null) {
+            String msg = buildVoteMessage(actorName, total);
+            NotificationEvent event = NotificationEvent.builder()
+                    .userId(ownerId)
+                    .type("VOTE_ACTIVITY")
+                    .title("Nouveau vote")
+                    .message(msg)
+                    .createdAt(Instant.now())
+                    .build();
+            notificationPublisher.publish(String.valueOf(dto.getIdeaId()), event);
+        }
+
+        return mapper.toDto(saved);
+    }
+
+    private String buildVoteMessage(String actorName, long total) {
+        String name = (actorName == null || actorName.isBlank()) ? "Quelqu'un" : actorName;
+        if (total <= 1) {
+            return name + " a voté pour votre idée";
+        }
+        long others = total - 1;
+        return name + " et " + others + " autre" + (others > 1 ? "s" : "") + " ont voté pour votre idée";
     }
 
     // ================= GET BY ID =================
@@ -86,6 +105,7 @@ public class VoteServiceImpl implements VoteService {
             throw new ResourceNotFoundException("Vote not found with id " + id);
         }
         repo.deleteById(id);
+        // No notification on delete (per requirements)
     }
 
     // ================= COUNT =================

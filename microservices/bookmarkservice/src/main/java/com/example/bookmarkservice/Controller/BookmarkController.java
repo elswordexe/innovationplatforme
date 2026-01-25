@@ -23,8 +23,8 @@ public class BookmarkController {
     }
 
     @PostMapping
-    public BookmarkDto add(@RequestBody BookmarkDto dto) {
-        return service.addBookmark(dto);
+    public BookmarkDto add(@RequestBody BookmarkDto dto, @RequestHeader(value = "X-User-Name", required = false) String actorName) {
+        return service.addBookmark(dto, actorName);
     }
 
     @DeleteMapping("/{id}")
