@@ -1,7 +1,11 @@
 package com.example.bookmarkservice.Model.entities;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
 @Table(
         name = "bookmarks",
@@ -42,5 +46,5 @@ public class Bookmark {
     public void setIdeaId(Long ideaId) {
         this.ideaId = ideaId;
     }
-// getters & setters
+
 }
