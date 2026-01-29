@@ -1,0 +1,156 @@
+<!-- LAYOUT GLOBAL -->
+<div class="flex min-h-screen">
+
+  <!-- SIDEBAR (GAUCHE, HAUTEUR COMPLÈTE) -->
+  <app-sidebar class="w-64 flex-shrink-0"></app-sidebar>
+
+  <!-- ZONE DROITE -->
+  <div class="flex-1 flex flex-col ml-64">
+
+    <!-- NAVBAR (EN HAUT, SANS ESPACE) -->
+    <app-nearside></app-nearside>
+
+    <div class="reports-container flex-1 relative">
+  <!-- Header -->
+  <div class="reports-header">
+    <h1>Reports</h1>
+  </div>
+
+  <!-- Filters Row -->
+  <div class="filters-row">
+    <div class="filter-group">
+      <label>Timeframe:</label>
+      <select [(ngModel)]="selectedTimeframe" class="filter-select">
+        <option *ngFor="let option of timeframeOptions" [value]="option">{{ option }}</option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label>People:</label>
+      <select [(ngModel)]="selectedPeople" class="filter-select">
+        <option *ngFor="let option of peopleOptions" [value]="option">{{ option }}</option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label>Topic:</label>
+      <select [(ngModel)]="selectedTopic" class="filter-select">
+        <option *ngFor="let option of topicOptions" [value]="option">{{ option }}</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Top Metrics Row -->
+  <div class="metrics-row">
+    <div class="metric-card" *ngFor="let card of metricCards">
+      <div class="metric-label">{{ card.label }}</div>
+      <div class="metric-value">
+        {{ card.value }}<span class="metric-suffix" *ngIf="card.suffix">{{ card.suffix }}</span>
+      </div>
+    </div>
+
+    <!-- Activity Chart Card -->
+    <div class="activity-card">
+      <div class="activity-label">Activité</div>
+      <div class="activity-chart">
+        <div class="activity-y-axis">
+          <span>400</span>
+          <span>300</span>
+          <span>200</span>
+          <span>100</span>
+          <span>0</span>
+        </div>
+        <div class="activity-bars">
+          <div class="activity-bar-group" *ngFor="let data of activityData">
+            <div class="activity-bar" [style.height.%]="getActivityBarHeight(data.value)"></div>
+            <span class="activity-month">{{ data.month }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Knowledge Cards Row -->
+  <div class="knowledge-row">
+    <div class="knowledge-card" *ngFor="let card of knowledgeCards">
+      <div class="knowledge-header">
+        <span class="knowledge-label">{{ card.label }}</span>
+        <button class="info-btn" *ngIf="card.label === 'Connaissance initiale'">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <circle cx="8" cy="8" r="7" stroke="#9ca3af" stroke-width="1.5"/>
+            <path d="M8 7V11M8 5V5.5" stroke="#9ca3af" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+      <div class="knowledge-value">{{ card.value }}</div>
+      <div class="knowledge-chart" *ngIf="card.hasChart">
+        <svg class="mini-chart" viewBox="0 0 120 40" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="gradient-{{ card.label }}" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:0.3" />
+              <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:0" />
+            </linearGradient>
+          </defs>
+          <path
+            [attr.d]="getChartPath(card.chartData)"
+            [attr.fill]="'url(#gradient-' + card.label + ')'"
+            stroke="#3b82f6"
+            stroke-width="2"
+            vector-effect="non-scaling-stroke"
+          />
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Row: Subjects -->
+  <div class="subjects-row">
+    <!-- Weakest Subjects -->
+    <div class="subjects-card">
+      <h3 class="subjects-title">Sujets les plus faibles</h3>
+      <div class="subjects-list">
+        <div class="subject-item" *ngFor="let subject of weakestSubjects">
+          <div class="subject-icon">
+            <img [src]="getSubjectImage(subject.title)" [alt]="subject.title" />
+          </div>
+          <div class="subject-content">
+            <div class="subject-header">
+              <span class="subject-title">{{ subject.title }}</span>
+              <span class="subject-percentage">{{ subject.percentage }}% <span class="subject-status">{{ subject.status }}</span></span>
+            </div>
+            <div class="subject-progress">
+              <div class="progress-bar">
+                <div class="progress-fill weak" [style.width.%]="subject.percentage"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mastered Subjects -->
+    <div class="subjects-card">
+      <h3 class="subjects-title">Sujets les plus maîtrisés</h3>
+      <div class="subjects-list">
+        <div class="subject-item" *ngFor="let subject of masteredSubjects">
+          <div class="subject-icon">
+            <img [src]="getSubjectImage(subject.title)" [alt]="subject.title" />
+          </div>
+          <div class="subject-content">
+            <div class="subject-header">
+              <span class="subject-title">{{ subject.title }}</span>
+              <span class="subject-percentage">{{ subject.percentage }}% <span class="subject-status">{{ subject.status }}</span></span>
+            </div>
+            <div class="subject-progress">
+              <div class="progress-bar">
+                <div class="progress-fill mastered" [style.width.%]="subject.percentage"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+  </div>
+</div>

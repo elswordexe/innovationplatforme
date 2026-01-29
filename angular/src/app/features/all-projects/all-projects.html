@@ -1,0 +1,165 @@
+<!-- LAYOUT GLOBAL -->
+<div class="flex min-h-screen">
+
+  <!-- SIDEBAR (GAUCHE, HAUTEUR COMPLÈTE) -->
+  <app-sidebar class="w-64 flex-shrink-0"></app-sidebar>
+
+  <!-- ZONE DROITE -->
+  <div class="flex-1 flex flex-col ml-64">
+
+    <!-- NAVBAR (EN HAUT, SANS ESPACE) -->
+    <app-nearside></app-nearside>
+
+    <div class="all-projects-container flex-1 relative">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <div class="folder-icon">📁</div>
+      <h1 class="title">All Projects</h1>
+    </div>
+    <div class="header-right">
+      <select class="status-filter">
+        <option>Le statut</option>
+        <option>Approuvée</option>
+        <option>En cours</option>
+        <option>Terminée</option>
+      </select>
+
+      <div class="view-toggle-container">
+        <!-- Grid -->
+        <button
+          class="view-toggle"
+          [class.active]="viewMode === 'grid'"
+          (click)="toggleView('grid')">
+    <span class="grid-icon">
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+    </span>
+        </button>
+
+        <!-- Table -->
+        <button
+          class="view-toggle"
+          [class.active]="viewMode === 'table'"
+          (click)="toggleView('table')">
+    <span class="table-icon">
+      <span></span>
+      <span></span>
+    </span>
+        </button>
+      </div>
+
+      <button class="icon-button">⚙️</button>
+      <button class="add-button">+</button>
+    </div>
+
+  </div>
+
+  <!-- Projects Grid -->
+      <!-- Projects Grid -->
+      <div *ngIf="viewMode === 'grid'" class="projects-grid">
+        <div
+          class="project-card"
+          *ngFor="let project of projects"
+          (click)="onProjectClick(project)">
+          <div class="card-header">
+            <div class="project-icon">{{ project.icon }}</div>
+            <button class="menu-button">⋮</button>
+          </div>
+          <div class="card-content">
+            <h3 class="project-title">{{ project.title }}</h3>
+            <p class="project-description">{{ project.description }}</p>
+          </div>
+          <div class="card-footer">
+            <div class="status-badge"
+                 [ngClass]="{'approved': project.status === 'Approuvée', 'in-progress': project.status === 'En cours'}">
+              <span class="status-dot"></span>
+              <span class="status-text">{{ project.status }}</span>
+              <span class="status-percentage">{{ project.progress }}%</span>
+            </div>
+            <div class="project-stats">
+              <div class="stat-item"><span class="stat-icon">💡</span><span class="stat-value">{{ project.ideasCount }} idées</span></div>
+              <div class="stat-item"><span class="stat-icon">👍</span><span class="stat-value">{{ project.votesCount }} votes</span></div>
+              <div class="stat-item"><span class="stat-icon">💬</span><span class="stat-value">{{ project.feedbacksCount }} feedbacks</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Projects Table -->
+      <table *ngIf="viewMode === 'table'" class="projects-table">
+        <thead>
+        <tr>
+          <th>Icone</th>
+          <th>Projet</th>
+          <th>Description</th>
+          <th>Status</th>
+          <th>Progression</th>
+          <th>Idées</th>
+          <th>Votes</th>
+          <th>Feedbacks</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let project of projects" (click)="onProjectClick(project)">
+          <td>{{ project.icon }}</td>
+          <td>{{ project.title }}</td>
+          <td>{{ project.description }}</td>
+          <td>{{ project.status }}</td>
+          <td>{{ project.progress }}%</td>
+          <td>{{ project.ideasCount }}</td>
+          <td>{{ project.votesCount }}</td>
+          <td>{{ project.feedbacksCount }}</td>
+        </tr>
+        </tbody>
+      </table>
+
+
+      <!-- Pagination -->
+  <div class="pagination-container">
+    <div class="pagination-left">
+      <span class="pagination-text">Afficher</span>
+      <select
+        class="items-per-page"
+        [value]="itemsPerPage"
+        (change)="onItemsPerPageChange(+$any($event.target).value)">
+        <option [value]="10">10</option>
+        <option [value]="20">20</option>
+        <option [value]="50">50</option>
+      </select>
+      <span class="pagination-text">par page</span>
+    </div>
+
+    <div class="pagination-right">
+      <span class="pagination-info">1-{{ itemsPerPage }} sur {{ totalItems }}</span>
+
+      <div class="pagination-buttons">
+        <button
+          class="page-button"
+          (click)="onPageChange(currentPage - 1)"
+          [disabled]="currentPage === 1">
+          ←
+        </button>
+
+        <button
+          *ngFor="let page of getPageNumbers()"
+          class="page-button"
+          [class.active]="page === currentPage"
+          (click)="onPageChange(page)">
+          {{ page }}
+        </button>
+
+        <button
+          class="page-button"
+          (click)="onPageChange(currentPage + 1)"
+          [disabled]="currentPage === totalPages">
+          →
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</div>

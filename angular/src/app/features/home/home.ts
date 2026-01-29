@@ -5,7 +5,11 @@ import { Footer } from '../../core/components/footer/footer';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [Navbar, Footer],
+ // imports: [Navbar, Footer],
+  imports: [
+    Navbar,
+    Footer
+  ],
   templateUrl: './home.html',
   styleUrl: './home.css'
 })

@@ -1,0 +1,33 @@
+<div class="add-idea-container">
+  <h2>💡 Ajouter une nouvelle idée</h2>
+  <form [formGroup]="ideaForm" (ngSubmit)="submitIdea()">
+
+    <label>Titre</label>
+    <input type="text" formControlName="title" placeholder="Titre de l'idée" />
+
+    <label>Description</label>
+    <textarea formControlName="description" placeholder="Décrivez votre idée"></textarea>
+
+    <label>Categorie</label>
+    <select formControlName="category">
+      <option>Général</option>
+      <option>Innovation</option>
+      <option>Projet</option>
+      <option>Autre</option>
+    </select>
+
+    <label>Auteur</label>
+    <input type="text" formControlName="author" placeholder="Nom de l'auteur" />
+
+    <label>Priorité</label>
+    <select formControlName="priority">
+      <option>Haute</option>
+      <option>Moyenne</option>
+      <option>Basse</option>
+    </select>
+
+
+
+    <button type="submit" [disabled]="ideaForm.invalid">Ajouter l'idée</button>
+  </form>
+</div>

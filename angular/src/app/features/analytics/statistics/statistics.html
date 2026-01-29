@@ -1,0 +1,255 @@
+<!-- LAYOUT GLOBAL -->
+<div class="flex min-h-screen">
+
+  <!-- SIDEBAR (GAUCHE, HAUTEUR COMPLÈTE) -->
+  <app-sidebar class="w-64 flex-shrink-0"></app-sidebar>
+
+  <!-- ZONE DROITE -->
+  <div class="flex-1 flex flex-col ml-64">
+
+    <!-- NAVBAR (EN HAUT, SANS ESPACE) -->
+    <app-nearside></app-nearside>
+
+    <div class="statistics-container flex-1 relative">
+  <div class="statistics-header">
+    <h1>Statistics</h1>
+  </div>
+
+  <!-- Stat Cards Row -->
+  <div class="stat-cards-grid">
+    <div class="stat-card" *ngFor="let card of statCards">
+      <div class="stat-card-header">
+        <span class="stat-label">{{ card.label }}</span>
+        <button class="stat-menu-btn">⋮</button>
+      </div>
+      <div class="stat-value">{{ card.value }}</div>
+      <div class="stat-change" [class.positive]="card.isPositive" [class.negative]="!card.isPositive">
+        {{ card.change }}
+      </div>
+      <div class="stat-subtitle">{{ card.subtitle }}</div>
+    </div>
+  </div>
+
+  <!-- Charts Row -->
+  <div class="charts-row">
+    <!-- Profile Impressions Chart -->
+    <div class="chart-card impressions-chart">
+      <div class="chart-header">
+        <h3>Impressions du profil</h3>
+        <select class="chart-select" [(ngModel)]="selectedPeriod">
+          <option>Hebdomadaire</option>
+          <option>Mensuel</option>
+          <option>Annuel</option>
+        </select>
+      </div>
+
+      <div class="chart-legend">
+        <div class="legend-item">
+          <span class="legend-color" style="background: #8B5A2B;"></span>
+          <span>Comptes engagés</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-color" style="background: #FF8534;"></span>
+          <span>Activité du profil</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-color" style="background: #A4D65E;"></span>
+          <span>Comptes atteints</span>
+        </div>
+      </div>
+
+      <div class="bar-chart">
+        <div class="bar-chart-y-axis">
+          <span>50K</span>
+          <span>40K</span>
+          <span>30K</span>
+          <span>20K</span>
+          <span>10K</span>
+          <span>0K</span>
+        </div>
+        <div class="bar-chart-content">
+          <div class="bar-group" *ngFor="let data of profileImpressions">
+            <div class="stacked-bar">
+              <div class="bar-segment comptes"
+                   [style.height.%]="getBarHeight(data.comptes)"
+                   [attr.data-value]="data.comptes"></div>
+              <div class="bar-segment activite"
+                   [style.height.%]="getBarHeight(data.activite)"
+                   [attr.data-value]="data.activite"></div>
+              <div class="bar-segment attentes"
+                   [style.height.%]="getBarHeight(data.attentes)"
+                   [attr.data-value]="data.attentes"></div>
+            </div>
+            <span class="bar-label">{{ data.month }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Audience Reached Chart -->
+    <div class="chart-card audience-chart">
+      <div class="chart-header">
+        <h3>Audience atteinte</h3>
+        <button class="chart-menu-btn">⋮</button>
+      </div>
+
+      <div class="audience-circle">
+        <svg class="donut-chart" viewBox="0 0 240 240">
+          <defs>
+            <!-- Filtre pour l'ombre -->
+            <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+              <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.15"/>
+            </filter>
+          </defs>
+
+          <!-- Cercle de fond gris clair -->
+          <circle cx="120" cy="120" r="90" fill="none" stroke="#e5e7eb" stroke-width="28"/>
+
+          <!-- Premier cercle ORANGE (60%) -->
+          <circle cx="120" cy="120" r="90"
+                  fill="none"
+                  stroke="#FF8534"
+                  stroke-width="28"
+                  stroke-dasharray="339.29 565.48"
+                  stroke-dashoffset="0"
+                  transform="rotate(-90 120 120)"
+                  stroke-linecap="round"
+                  filter="url(#shadow)"
+                  class="donut-segment-orange"/>
+
+          <!-- Deuxième cercle VERT (40%) -->
+          <circle cx="120" cy="120" r="90"
+                  fill="none"
+                  stroke="#A4D65E"
+                  stroke-width="28"
+                  stroke-dasharray="226.19 565.48"
+                  stroke-dashoffset="-339.29"
+                  transform="rotate(-90 120 120)"
+                  stroke-linecap="round"
+                  filter="url(#shadow)"
+                  class="donut-segment-green"/>
+
+          <!-- Texte au centre -->
+          <text x="120" y="108" text-anchor="middle" class="audience-label-svg">Audience totale</text>
+          <text x="120" y="138" text-anchor="middle" class="audience-value-svg">{{ audienceReached | number }}</text>
+        </svg>
+      </div>
+
+      <div class="audience-legend">
+        <div class="legend-item">
+          <span class="legend-color-circle" style="background: #FF8534;"></span>
+          <span>60%</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-color-circle" style="background: #A4D65E;"></span>
+          <span>40%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Row -->
+  <div class="bottom-row">
+    <!-- Follower Growth Map -->
+    <div class="chart-card follower-growth">
+      <div class="chart-header">
+        <h3>Follower Growth</h3>
+        <select class="chart-select" [(ngModel)]="selectedCountry">
+          <option>Country</option>
+          <option>City</option>
+          <option>Region</option>
+        </select>
+      </div>
+
+      <div class="map-container">
+        <svg class="world-map" viewBox="0 0 600 300">
+          <!-- Fond clair -->
+          <rect x="0" y="0" width="600" height="300" fill="#f8f9fa"/>
+
+          <!-- Continents en gris très clair -->
+          <!-- Amérique du Nord -->
+          <path d="M 80 60 L 150 50 L 180 80 L 190 120 L 170 140 L 140 150 L 100 130 L 85 100 Z"
+                fill="#e9ecef" stroke="#dee2e6" stroke-width="0.5"/>
+
+          <!-- Amérique du Sud -->
+          <path d="M 140 160 L 155 190 L 150 240 L 130 230 L 120 200 L 125 170 Z"
+                fill="#e9ecef" stroke="#dee2e6" stroke-width="0.5"/>
+
+          <!-- Europe -->
+          <path d="M 280 70 L 310 65 L 330 80 L 325 95 L 300 100 L 275 90 Z"
+                fill="#e9ecef" stroke="#dee2e6" stroke-width="0.5"/>
+
+          <!-- Afrique -->
+          <path d="M 290 110 L 330 115 L 345 160 L 340 200 L 310 210 L 285 190 L 280 140 Z"
+                fill="#e9ecef" stroke="#dee2e6" stroke-width="0.5"/>
+
+          <!-- Asie -->
+          <path d="M 350 60 L 480 65 L 510 90 L 500 140 L 450 160 L 380 140 L 360 100 Z"
+                fill="#e9ecef" stroke="#dee2e6" stroke-width="0.5"/>
+
+          <!-- Océanie -->
+          <path d="M 480 180 L 510 185 L 515 205 L 500 210 L 485 200 Z"
+                fill="#e9ecef" stroke="#dee2e6" stroke-width="0.5"/>
+
+          <!-- Marqueurs des pays -->
+          <!-- Maroc -->
+          <circle cx="285" cy="80" r="5" fill="#8B4513" opacity="0.8"/>
+          <circle cx="285" cy="80" r="8" fill="#8B4513" opacity="0.3"/>
+
+          <!-- Espagne -->
+          <circle cx="295" cy="75" r="4" fill="#D2691E" opacity="0.8"/>
+          <circle cx="295" cy="75" r="7" fill="#D2691E" opacity="0.3"/>
+
+          <!-- Italie -->
+          <circle cx="310" cy="82" r="3" fill="#CD853F" opacity="0.8"/>
+          <circle cx="310" cy="82" r="6" fill="#CD853F" opacity="0.3"/>
+
+          <!-- France -->
+          <circle cx="295" cy="68" r="3" fill="#DEB887" opacity="0.8"/>
+
+          <!-- Autre (Amérique) -->
+          <circle cx="140" cy="100" r="3" fill="#F4A460" opacity="0.8"/>
+        </svg>
+
+        <div class="country-list">
+          <div class="country-item" *ngFor="let country of followerCountries">
+            <div class="country-info">
+              <span class="country-dot" [style.background]="country.color"></span>
+              <span class="country-name">{{ country.name }}</span>
+            </div>
+            <div class="country-stats">
+              <div class="country-bar">
+                <div class="country-bar-fill"
+                     [style.width.%]="country.percentage"
+                     [style.background]="country.color"></div>
+              </div>
+              <span class="country-percentage">{{ country.percentage }}%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Activities -->
+    <div class="chart-card recent-activities">
+      <div class="chart-header">
+        <h3>Recent Activities</h3>
+        <button class="chart-menu-btn">⋮</button>
+      </div>
+
+      <div class="activities-list">
+        <div class="activity-item" *ngFor="let activity of recentActivities">
+          <div class="activity-avatar">{{ activity.avatar }}</div>
+          <div class="activity-content">
+            <div class="activity-text">
+              <strong>{{ activity.user }}</strong> {{ activity.action }}
+            </div>
+            <div class="activity-time">{{ activity.time }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+  </div>
+</div>

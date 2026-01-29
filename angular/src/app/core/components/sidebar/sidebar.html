@@ -1,17 +1,39 @@
-<aside class="hidden lg:flex flex-col w-64 px-6 py-8 bg-[var(--brand)] text-white">
+<button
+  (click)="toggleSidebar()"
+  class="lg:hidden p-2 m-2 rounded-md bg-amber-800 text-white"
+>
+  <!-- Hamburger icon simple -->
+  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M4 6h16M4 12h16M4 18h16"/>
+  </svg>
+</button>
+<aside
+  [class.translate-x-0]="sidebarOpen"
+  [class.-translate-x-full]="!sidebarOpen"
+  class="fixed lg:relative top-0 left-0 h-full w-64 px-6 py-8 bg-[var(--brand)] text-white transform transition-transform duration-300"
+>
   <div class="mb-10">
     <h2 class="text-xl font-semibold tracking-tight text-white">PinBoard</h2>
   </div>
 
   <nav class="flex-1 space-y-1">
-    <a href="#" class="sidebar-item-inverted active flex items-center gap-3">
+    <a href="/dashb" class="sidebar-item-inverted active flex items-center gap-3"
+       routerLink="/dashb"
+       routerLinkActive="active"
+       [routerLinkActiveOptions]="{ exact: true }"
+    >
       <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
         <path d="M3 10.5L12 3l9 7.5" />
         <path d="M5 10v10h5v-6h4v6h5V10" />
       </svg>
       <span>Home</span>
     </a>
-    <a href="#" class="sidebar-item-inverted flex items-center gap-3">
+    <a href="/allprojects" class="sidebar-item-inverted flex items-center gap-3"
+       routerLink="/allprojects"
+       routerLinkActive="active"
+       [routerLinkActiveOptions]="{ exact: true }"
+    >
       <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 7h18M3 12h18M3 17h18"/></svg>
       <span>All projects</span>
     </a>
@@ -50,10 +72,64 @@
       <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
       <span>Bookmarks</span>
     </a>
-    <a href="#" class="sidebar-item-inverted flex items-center gap-3">
-      <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
-      <span>Analytics</span>
-    </a>
+    <!-- Analytics -->
+    <div>
+      <button
+        (click)="toggleAnalytics()"
+        class="sidebar-item-inverted flex items-center gap-3 w-full"
+      >
+        <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path d="M3 3v18h18"/>
+          <path d="M18 17V9"/>
+          <path d="M13 17V5"/>
+          <path d="M8 17v-3"/>
+        </svg>
+
+        <span class="flex-1 text-left">Analytics</span>
+
+        <svg
+          class="sidebar-icon transition-transform duration-300"
+          [class.rotate-180]="analyticsOpen"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+        >
+          <path d="M6 9l6 6 6-6"/>
+        </svg>
+      </button>
+
+      <div *ngIf="analyticsOpen" class="ml-9 mt-1 space-y-1">
+        <a href="/analytics/reports" class="sidebar-item-inverted flex items-center gap-3 text-sm"
+           routerLink="/analytics/reports"
+           routerLinkActive="active"
+           [routerLinkActiveOptions]="{ exact: true }"
+        >
+          <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+            <path d="M14 2v6h6"/>
+            <path d="M16 13H8"/>
+            <path d="M16 17H8"/>
+            <path d="M10 9H8"/>
+          </svg>
+
+          <span>Reports</span>
+        </a>
+
+        <a href="/analytics/statistics" class="sidebar-item-inverted flex items-center gap-3 text-sm"
+           routerLink="/analytics/statistics"
+           routerLinkActive="active"
+           [routerLinkActiveOptions]="{ exact: true }"
+        >
+          <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M4 20h16M7 20V10M12 20V6M17 20v-8" />
+          </svg>
+          <span>
+            Statistics
+          </span>
+        </a>
+      </div>
+    </div>
+
     <a href="#" class="sidebar-item-inverted flex items-center gap-3">
       <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 15.5a3.5 3.5 0 100-7 3.5 3.5 0 000 7z"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09a1.65 1.65 0 001.51-1z"/></svg>
       <span>Settings</span>

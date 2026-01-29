@@ -1,0 +1,110 @@
+<nav class="navbar" (click)="closeMenus()">
+  <div class="navbar-container">
+
+    <!-- Breadcrumbs / Navigation Path -->
+    <div class="breadcrumbs">
+      <div
+        class="breadcrumb-item"
+        *ngFor="let breadcrumb of breadcrumbs; let last = last"
+        [class.active]="breadcrumb.active"
+        (click)="navigateTo(breadcrumb.url); $event.stopPropagation()">
+        <span class="breadcrumb-label">{{ breadcrumb.label }}</span>
+        <span class="breadcrumb-separator" *ngIf="!last">›</span>
+      </div>
+    </div>
+
+    <!-- Right Section: User Profile & Actions -->
+    <div class="navbar-actions">
+
+      <!-- User Name with Dropdown -->
+      <div class="user-section" (click)="toggleProfileMenu(); $event.stopPropagation()">
+        <div class="user-badge">
+          <span class="user-icon">🏆</span>
+        </div>
+        <span class="user-name">{{ userProfile.name }}</span>
+        <span class="dropdown-arrow">▼</span>
+
+        <!-- Profile Dropdown Menu -->
+        <div class="dropdown-menu" *ngIf="showProfileMenu" (click)="$event.stopPropagation()">
+          <div class="dropdown-header">
+            <div class="profile-avatar-large">{{ userProfile.avatar }}</div>
+            <div class="profile-info">
+              <span class="profile-name">{{ userProfile.name }}</span>
+              <span class="profile-role">{{ userProfile.role }}</span>
+            </div>
+          </div>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item" (click)="onProfile()">
+            <span class="item-icon">👤</span>
+            Mon Profil
+          </button>
+          <button class="dropdown-item" (click)="onSettings()">
+            <span class="item-icon">⚙️</span>
+            Paramètres
+          </button>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item logout" (click)="onLogout()">
+            <span class="item-icon">🚪</span>
+            Déconnexion
+          </button>
+        </div>
+      </div>
+
+      <!-- Notifications Bell -->
+      <button class="icon-button" (click)="toggleNotifications(); $event.stopPropagation()">
+        <span class="bell-icon">🔔</span>
+        <span class="notification-badge" *ngIf="notificationCount > 0">
+          {{ notificationCount }}
+        </span>
+
+        <!-- Notifications Dropdown -->
+        <div class="notifications-dropdown" *ngIf="showNotifications" (click)="$event.stopPropagation()">
+          <div class="notifications-header">
+            <span class="notifications-title">Notifications</span>
+            <span class="notifications-count">{{ notificationCount }}</span>
+          </div>
+          <div class="notifications-list">
+            <div class="notification-item">
+              <div class="notification-icon">💡</div>
+              <div class="notification-content">
+                <span class="notification-text">Nouvelle idée ajoutée</span>
+                <span class="notification-time">Il y a 5 min</span>
+              </div>
+            </div>
+            <div class="notification-item">
+              <div class="notification-icon">✅</div>
+              <div class="notification-content">
+                <span class="notification-text">Projet approuvé</span>
+                <span class="notification-time">Il y a 1h</span>
+              </div>
+            </div>
+            <div class="notification-item">
+              <div class="notification-icon">💬</div>
+              <div class="notification-content">
+                <span class="notification-text">Nouveau commentaire</span>
+                <span class="notification-time">Il y a 3h</span>
+              </div>
+            </div>
+          </div>
+          <div class="notifications-footer">
+            <button class="view-all-notifications">Voir tout</button>
+          </div>
+        </div>
+      </button>
+
+      <!-- Grid/View Toggle -->
+      <button class="icon-button">
+        <span class="grid-icon">▦</span>
+      </button>
+
+      <!-- Profile Avatar -->
+      <div class="profile-avatar" (click)="toggleProfileMenu(); $event.stopPropagation()">
+        <img
+          src="https://i.pravatar.cc/150?img=47"
+          alt="Profile"
+          class="avatar-image">
+      </div>
+
+    </div>
+  </div>
+</nav>

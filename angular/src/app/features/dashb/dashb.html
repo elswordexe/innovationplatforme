@@ -1,0 +1,230 @@
+<!-- LAYOUT GLOBAL -->
+<div class="flex min-h-screen">
+
+  <!-- SIDEBAR (GAUCHE, HAUTEUR COMPLÈTE) -->
+  <app-sidebar class="w-64 flex-shrink-0"></app-sidebar>
+
+  <!-- ZONE DROITE -->
+  <div class="flex-1 flex flex-col ml-64">
+
+    <!-- NAVBAR (EN HAUT, SANS ESPACE) -->
+    <app-nearside></app-nearside>
+    <div *ngIf="showAddIdea; else dashboardContent">
+      <app-add-idea (ideaAdded)="addIdeaToDashboard($event)"></app-add-idea>
+    </div>
+    <ng-template #dashboardContent>
+    <!-- DASHBOARD CONTENT -->
+    <div class="dashboard-container flex-1 relative">
+
+      <!-- HEADER -->
+      <div class="dashboard-header">
+        <h1 class="dashboard-title">Dashboard</h1>
+        <div class="header-actions">
+          <span class="welcome-text">Bienvenue ! 👋</span>
+        </div>
+      </div>
+
+
+      <!-- MAIN GRID -->
+      <div class="dashboard-grid">
+
+        <!-- Dernières Idées -->
+        <div class="dashboard-card recent-ideas-card">
+          <div class="card-header">
+            <h2 class="card-title">💡 Dernières Idées</h2>
+            <button class="view-all-btn">Voir tout</button>
+          </div>
+
+          <div class="ideas-list">
+
+            <!-- LOADING -->
+            <div *ngIf="isLoadingIdeas" class="ideas-loading">
+              <div class="spinner"></div>
+              <p>Chargement des idées...</p>
+            </div>
+
+            <!-- ERROR -->
+            <div *ngIf="!isLoadingIdeas && ideasError" class="ideas-empty">
+              <p>❌ Impossible de charger les idées</p>
+            </div>
+
+            <!-- LIST -->
+            <ng-container *ngIf="!isLoadingIdeas && recentIdeas.length > 0">
+              <div
+                class="idea-item"
+                *ngFor="let idea of recentIdeas"
+                (click)="onIdeaClick(idea)"
+              >
+                <div class="idea-header">
+                  <div class="author-info">
+                    <span class="author-avatar">{{ idea.authorAvatar }}</span>
+                    <div class="author-details">
+                      <span class="author-name">{{ idea.author }}</span>
+                      <span class="idea-date">{{ idea.date }}</span>
+                    </div>
+                  </div>
+                  <span class="idea-category">{{ idea.category }}</span>
+                </div>
+
+                <h3 class="idea-title">{{ idea.title }}</h3>
+                <p class="idea-description">{{ idea.description }}</p>
+
+                <div class="idea-stats">
+                  <span class="stat">👍 {{ idea.votesCount }} votes</span>
+                  <span class="stat">💬 {{ idea.commentsCount }} commentaires</span>
+                </div>
+              </div>
+            </ng-container>
+
+            <!-- EMPTY -->
+            <div
+              *ngIf="!isLoadingIdeas && !ideasError && recentIdeas.length === 0"
+              class="ideas-empty"
+            >
+              <p>Aucune idée disponible</p>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- Calendrier -->
+        <div class="dashboard-card calendar-card">
+          <div class="card-header">
+            <h2 class="card-title">📅 Calendrier</h2>
+          </div>
+
+          <div class="calendar">
+            <div class="calendar-header">
+              <button class="calendar-nav" (click)="previousMonth()">←</button>
+              <span class="calendar-month">
+                {{ currentMonth }} {{ currentYear }}
+              </span>
+              <button class="calendar-nav" (click)="nextMonth()">→</button>
+            </div>
+
+            <div class="calendar-weekdays">
+              <span class="weekday">Lun</span>
+              <span class="weekday">Mar</span>
+              <span class="weekday">Mer</span>
+              <span class="weekday">Jeu</span>
+              <span class="weekday">Ven</span>
+              <span class="weekday">Sam</span>
+              <span class="weekday">Dim</span>
+            </div>
+
+            <div class="calendar-days">
+              <div
+                *ngFor="let dayInfo of calendarDays"
+                class="calendar-day"
+                [class.today]="dayInfo.isToday"
+                [class.has-event]="dayInfo.hasEvent"
+                [class.empty]="!dayInfo.day"
+              >
+                <span *ngIf="dayInfo.day">{{ dayInfo.day }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Événements -->
+          <div class="upcoming-events">
+            <h3 class="events-title">Événements à venir</h3>
+
+            <div class="event-item" *ngFor="let event of calendarEvents">
+              <div class="event-indicator" [class]="event.type"></div>
+              <div class="event-details">
+                <span class="event-title">{{ event.title }}</span>
+                <span class="event-time">
+                  {{ event.date | date: 'dd/MM' }} à {{ event.time }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Projets Approuvés -->
+        <div class="dashboard-card projects-card">
+          <div class="card-header">
+            <h2 class="card-title">✅ Projets Approuvés</h2>
+            <button class="view-all-btn">Voir tout</button>
+          </div>
+
+          <div class="projects-grid">
+            <div
+              class="project-item"
+              *ngFor="let project of approvedProjects"
+              (click)="onProjectClick(project)"
+            >
+              <div class="project-icon">{{ project.icon }}</div>
+
+              <div class="project-info">
+                <h3 class="project-title">{{ project.title }}</h3>
+                <p class="project-description">{{ project.description }}</p>
+
+                <div class="progress-bar">
+                  <div
+                    class="progress-fill"
+                    [style.width.%]="project.progress"
+                  ></div>
+                </div>
+
+                <span class="progress-text">{{ project.progress }}%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Top Idées -->
+        <div class="dashboard-card top-ideas-card">
+          <div class="card-header">
+            <h2 class="card-title">🏆 Top Idées</h2>
+            <button class="view-all-btn">Voir tout</button>
+          </div>
+
+          <div class="top-ideas-list">
+            <div
+              class="top-idea-item"
+              *ngFor="let idea of topIdeas; let i = index"
+              (click)="onIdeaClick(idea)"
+            >
+              <div class="rank-badge">{{ i + 1 }}</div>
+
+              <div class="top-idea-content">
+                <div class="top-idea-header">
+                  <h3 class="top-idea-title">{{ idea.title }}</h3>
+                  <span class="top-idea-votes">
+                    👍 {{ idea.votesCount }}
+                  </span>
+                </div>
+
+                <p class="top-idea-description">
+                  {{ idea.description }}
+                </p>
+
+                <div class="top-idea-meta">
+                  <span class="top-idea-author">
+                    {{ idea.authorAvatar }} {{ idea.author }}
+                  </span>
+                  <span class="top-idea-category">
+                    {{ idea.category }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- FLOATING ACTION BUTTON -->
+      <!-- Bouton pour afficher le formulaire -->
+      <button class="fab" (click)="toggleAddIdeaForm()">
+        <span class="fab-icon">+</span>
+        <span class="fab-text">Idée</span>
+      </button>
+
+    </div>
+
+    </ng-template>
+  </div>
+</div>

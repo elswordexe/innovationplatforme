@@ -1,4 +1,4 @@
-   /* Variables de la sidebar */
+/* Variables de la sidebar */
 :host {
   --brand: #915506;
   --brand-light: #c07a1a;
@@ -19,7 +19,9 @@ aside {
 }
 
 .sidebar-item-inverted {
-  display: block;
+  display: flex;                 /* ✅ clé du problème */
+  align-items: center;           /* centre verticalement */
+  gap: 0.75rem;
   padding: 0.65rem 0.8rem;
   border-radius: 0.8rem;
   font-weight: 500;
