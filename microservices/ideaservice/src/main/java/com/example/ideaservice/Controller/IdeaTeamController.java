@@ -16,7 +16,6 @@ import java.util.List;
 @RequestMapping("/api/ideas")
 @RequiredArgsConstructor
 @Tag(name = "Idea Team Management", description = "APIs pour la gestion des équipes des idées")
-@CrossOrigin(origins = "*")
 public class IdeaTeamController {
     private final IdeaServiceImpl ideaService;
 

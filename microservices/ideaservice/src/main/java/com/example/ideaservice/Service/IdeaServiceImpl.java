@@ -1,16 +1,21 @@
 package com.example.ideaservice.Service;
 
-
 import com.example.ideaservice.Exceptions.ResourceNotFoundException;
 import com.example.ideaservice.Model.Dto.IdeaCreateRequest;
 import com.example.ideaservice.Model.Dto.IdeaDTO;
 import com.example.ideaservice.Model.Dto.IdeaUpdateRequest;
+import com.example.ideaservice.Model.Dto.AttachmentUploadRequest;
 import com.example.ideaservice.Model.entities.Idea;
+import com.example.ideaservice.Model.entities.Attachment;
+
 import com.example.ideaservice.Model.enums.IdeaStatus;
 import com.example.ideaservice.Repository.IdeaRepository;
+import com.example.ideaservice.Repository.AttachementRepository;
 import com.example.ideaservice.mapper.IdeaMapper;
 import com.example.ideaservice.messaging.NotificationEvent;
 import com.example.ideaservice.messaging.NotificationPublisher;
+import com.example.ideaservice.client.UsersClient;
+
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.BadRequestException;
 import lombok.RequiredArgsConstructor;
@@ -20,8 +25,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.Base64;
+import java.util.Date;
 import feign.FeignException;
 
 @Service
@@ -31,26 +40,80 @@ import feign.FeignException;
 public class IdeaServiceImpl implements IdeaService {
 
     private final IdeaRepository ideaRepository;
+    private final AttachementRepository attachementRepository;
     private final IdeaMapper ideaMapper;
     private final NotificationPublisher notificationPublisher;
-    private final com.example.ideaservice.client.UsersClient usersClient;
+    private final UsersClient usersClient;
+    private final FileStorageService fileStorageService;
 
     @Override
-    public IdeaDTO createIdea(IdeaCreateRequest request, Long creatorId) {
-        log.info("Creating new idea with title: {} for creator: {}", request.getTitle(), creatorId);
+    public IdeaDTO createIdea(IdeaCreateRequest request, Long creatorId, Long organizationId) {
+        log.info("Creating new idea with title: {} for creator: {} in org: {}", request.getTitle(), creatorId, organizationId);
 
         Idea idea = ideaMapper.toEntity(request);
         idea.setCreatorId(creatorId);
-
-
-        if (request.getOrganizationId() != null) {
-            idea.setOrganizationId(request.getOrganizationId());
-        } else {
-            idea.setOrganizationId(1L);
-        }
+        idea.setOrganizationId(organizationId);
 
         Idea savedIdea = ideaRepository.save(idea);
         log.info("Idea created successfully with id: {}", savedIdea.getId());
+
+        // Cover image stored as an Attachment with bytes in DB
+        if (request.getImageBase64() != null && !request.getImageBase64().isBlank()) {
+            try {
+                String base64Data = request.getImageBase64();
+                if (base64Data.startsWith("data:image/")) {
+                    base64Data = base64Data.split(",")[1];
+                }
+                byte[] imageBytes = Base64.getDecoder().decode(base64Data);
+
+                Attachment attachment = Attachment.builder()
+                        .fileName("idea_image_" + savedIdea.getId() + ".jpg")
+                        .fileType("image/jpeg")
+                        .data(imageBytes)
+                        .fileSize((long) imageBytes.length)
+                        .uploadDate(new Date())
+                        .uploadedBy(creatorId)
+                        .idea(savedIdea)
+                        .build();
+
+                Attachment savedAtt = attachementRepository.save(attachment);
+                savedAtt.setFileUrl("/api/ideas/attachments/" + savedAtt.getId() + "/download");
+                attachementRepository.save(savedAtt);
+            } catch (Exception e) {
+                log.warn("Failed to process image attachment: {}", e.getMessage());
+            }
+        }
+
+        // Additional attachments stored in DB
+        if (request.getAttachments() != null && !request.getAttachments().isEmpty()) {
+            for (AttachmentUploadRequest a : request.getAttachments()) {
+                if (a == null || a.getDataBase64() == null || a.getDataBase64().isBlank()) continue;
+                try {
+                    String base64Data = a.getDataBase64();
+                    int comma = base64Data.indexOf(',');
+                    if (comma >= 0) {
+                        base64Data = base64Data.substring(comma + 1);
+                    }
+                    byte[] bytes = Base64.getDecoder().decode(base64Data);
+
+                    Attachment attachment = Attachment.builder()
+                            .fileName(a.getFileName() == null ? "attachment" : a.getFileName())
+                            .fileType(a.getFileType() == null ? "application/octet-stream" : a.getFileType())
+                            .data(bytes)
+                            .fileSize((long) bytes.length)
+                            .uploadDate(new Date())
+                            .uploadedBy(creatorId)
+                            .idea(savedIdea)
+                            .build();
+
+                    Attachment savedAtt = attachementRepository.save(attachment);
+                    savedAtt.setFileUrl("/api/ideas/attachments/" + savedAtt.getId() + "/download");
+                    attachementRepository.save(savedAtt);
+                } catch (Exception e) {
+                    log.warn("Failed to process attachment {}: {}", a.getFileName(), e.getMessage());
+                }
+            }
+        }
 
         NotificationEvent event = NotificationEvent.builder()
                 .userId(creatorId)
@@ -76,19 +139,96 @@ public class IdeaServiceImpl implements IdeaService {
     }
 
     @Override
+    public IdeaDTO createIdeaMultipart(IdeaCreateRequest request,
+                                      MultipartFile coverImage,
+                                      List<MultipartFile> attachments,
+                                      Long creatorId,
+                                      Long organizationId) {
+        log.info("Creating new idea (multipart) with title: {} for creator: {} in org: {}", request.getTitle(), creatorId, organizationId);
+
+        Idea idea = ideaMapper.toEntity(request);
+        idea.setCreatorId(creatorId);
+        idea.setOrganizationId(organizationId);
+
+        Idea savedIdea = ideaRepository.save(idea);
+        log.info("Idea created successfully (multipart) with id: {}", savedIdea.getId());
+
+        if (coverImage != null && !coverImage.isEmpty()) {
+            try {
+                FileStorageService.StoredFile stored = fileStorageService.storeIdeaFile(savedIdea.getId(), coverImage, "cover");
+                Attachment attachment = Attachment.builder()
+                        .fileName(coverImage.getOriginalFilename() == null ? "cover" : coverImage.getOriginalFilename())
+                        .fileType(coverImage.getContentType() == null ? "application/octet-stream" : coverImage.getContentType())
+                        .fileSize(coverImage.getSize())
+                        .uploadDate(new Date())
+                        .uploadedBy(creatorId)
+                        .idea(savedIdea)
+                        .filePath(stored.absolutePath())
+                        .build();
+
+                Attachment savedAtt = attachementRepository.save(attachment);
+                savedAtt.setFileUrl("/api/ideas/attachments/" + savedAtt.getId() + "/download");
+                attachementRepository.save(savedAtt);
+            } catch (Exception e) {
+                log.warn("Failed to store cover image: {}", e.getMessage());
+            }
+        }
+
+        if (attachments != null && !attachments.isEmpty()) {
+            for (MultipartFile f : attachments) {
+                if (f == null || f.isEmpty()) continue;
+                try {
+                    FileStorageService.StoredFile stored = fileStorageService.storeIdeaFile(savedIdea.getId(), f, "attachments");
+                    Attachment attachment = Attachment.builder()
+                            .fileName(f.getOriginalFilename() == null ? "attachment" : f.getOriginalFilename())
+                            .fileType(f.getContentType() == null ? "application/octet-stream" : f.getContentType())
+                            .fileSize(f.getSize())
+                            .uploadDate(new Date())
+                            .uploadedBy(creatorId)
+                            .idea(savedIdea)
+                            .filePath(stored.absolutePath())
+                            .build();
+                    Attachment savedAtt = attachementRepository.save(attachment);
+                    savedAtt.setFileUrl("/api/ideas/attachments/" + savedAtt.getId() + "/download");
+                    attachementRepository.save(savedAtt);
+                } catch (Exception e) {
+                    log.warn("Failed to store attachment {}: {}", f.getOriginalFilename(), e.getMessage());
+                }
+            }
+        }
+
+        NotificationEvent event = NotificationEvent.builder()
+                .userId(creatorId)
+                .type("IDEA_CREATED")
+                .title("Nouvelle idée créée")
+                .message("Votre idée '" + savedIdea.getTitle() + "' a été créée avec l'ID " + savedIdea.getId())
+                .createdAt(java.time.Instant.now())
+                .build();
+        notificationPublisher.publish(event);
+
+        return ideaMapper.toDTO(savedIdea);
+    }
+
+    @Override
     @Transactional
-    public List<IdeaDTO> getAllIdeas() {
-        List<Idea> ideas = ideaRepository.findAll();
+    public List<IdeaDTO> getAllIdeasByOrg(Long organizationId) {
+        List<Idea> ideas = ideaRepository.findByOrganizationId(organizationId);
         return ideaMapper.toDTOList(ideas);
     }
 
-
     @Override
-    public IdeaDTO updateIdea(Long id, IdeaUpdateRequest request) throws ResourceNotFoundException {
-        log.info("Updating idea with id: {}", id);
+    public IdeaDTO updateIdea(Long id, IdeaUpdateRequest request, Long currentUserId, Long organizationId) throws ResourceNotFoundException {
+        log.info("Updating idea with id: {} by user {} in org {}", id, currentUserId, organizationId);
 
         Idea idea = ideaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Idea not found with id: " + id));
+
+        if (!idea.getCreatorId().equals(currentUserId) || !idea.getOrganizationId().equals(organizationId)) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.FORBIDDEN,
+                    "You can only update your own ideas in the current organization");
+        }
+
         if (idea.getStatus() != IdeaStatus.DRAFT) {
             throw new BadRequestException("Only ideas in DRAFT status can be modified");
         }
@@ -106,11 +246,17 @@ public class IdeaServiceImpl implements IdeaService {
     }
 
     @Override
-    public void deleteIdea(Long id) throws ResourceNotFoundException {
-        log.info("Deleting idea with id: {}", id);
+    public void deleteIdea(Long id, Long currentUserId, Long organizationId) throws ResourceNotFoundException {
+        log.info("Deleting idea with id: {} by user {} in org {}", id, currentUserId, organizationId);
 
         Idea idea = ideaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Idea not found with id: " + id));
+
+        if (!idea.getCreatorId().equals(currentUserId) || !idea.getOrganizationId().equals(organizationId)) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.FORBIDDEN,
+                    "You can only delete your own ideas in the current organization");
+        }
 
         if (idea.getStatus() != IdeaStatus.DRAFT) {
             throw new BadRequestException("Only ideas in DRAFT status can be deleted");
@@ -156,18 +302,17 @@ public class IdeaServiceImpl implements IdeaService {
 
     @Override
     @Transactional
-    public List<IdeaDTO> getIdeasByStatus(IdeaStatus status) {
-        log.info("Fetching ideas with status: {}", status);
+    public List<IdeaDTO> getIdeasByStatusInOrg(IdeaStatus status, Long organizationId) {
+        log.info("Fetching ideas with status: {} in org {}", status, organizationId);
 
-        List<Idea> ideas = ideaRepository.findByStatus(status);
+        List<Idea> ideas = ideaRepository.findByStatusAndOrganizationId(status, organizationId);
         return ideaMapper.toDTOList(ideas);
     }
 
     @Override
     @Transactional
     public List<IdeaDTO> getIdeasByCreator(Long creatorId) {
-        log.info("Fetching ideas created by user: {}", creatorId);
-
+        log.info("Fetching ideas created by user: {} (all orgs)", creatorId);
         List<Idea> ideas = ideaRepository.findByCreatorId(creatorId);
         return ideaMapper.toDTOList(ideas);
     }
@@ -176,28 +321,32 @@ public class IdeaServiceImpl implements IdeaService {
     @Transactional
     public List<IdeaDTO> getIdeasByOrganization(Long organizationId) {
         log.info("Fetching ideas for organization: {}", organizationId);
-
         List<Idea> ideas = ideaRepository.findByOrganizationId(organizationId);
         return ideaMapper.toDTOList(ideas);
     }
 
     @Override
     @Transactional
-    public List<IdeaDTO> searchIdeas(String keyword) {
-        log.info("Searching ideas with keyword: {}", keyword);
-
-        List<Idea> ideas = ideaRepository.searchByKeyword(keyword);
+    public List<IdeaDTO> getIdeasByCreatorAndOrg(Long creatorId, Long organizationId) {
+        log.info("Fetching ideas created by user: {} in org {}", creatorId, organizationId);
+        List<Idea> ideas = ideaRepository.findByCreatorIdAndOrganizationId(creatorId, organizationId);
         return ideaMapper.toDTOList(ideas);
     }
 
     @Override
     @Transactional
-    public List<IdeaDTO> getTop10Ideas() {
-        log.info("Fetching top 10 ideas");
+    public List<IdeaDTO> searchIdeasInOrg(String keyword, Long organizationId) {
+        log.info("Searching ideas with keyword: {} in org {}", keyword, organizationId);
+        List<Idea> ideas = ideaRepository.searchByKeywordInOrg(keyword, organizationId);
+        return ideaMapper.toDTOList(ideas);
+    }
 
+    @Override
+    @Transactional
+    public List<IdeaDTO> getTop10IdeasInOrg(Long organizationId) {
+        log.info("Fetching top 10 ideas in org {}", organizationId);
         Pageable topTen = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "totalScore"));
-        Page<Idea> topIdeas = ideaRepository.findAll(topTen);
-
+        Page<Idea> topIdeas = ideaRepository.findTopIdeasInOrg(organizationId, topTen);
         return topIdeas.getContent().stream()
                 .map(ideaMapper::toDTO)
                 .collect(Collectors.toList());
@@ -341,5 +490,17 @@ public class IdeaServiceImpl implements IdeaService {
                     String.format("Invalid status transition from %s to %s", currentStatus, newStatus)
             );
         }
+    }
+
+    @Override
+    public void updateVoteCount(Long ideaId, Integer voteCount) {
+        log.info("Updating vote_count field for idea {} to {} (total votes from vote service)", ideaId, voteCount);
+        Idea idea = ideaRepository.findById(ideaId)
+                .orElseThrow(() -> new ResourceNotFoundException("Idea not found with id: " + ideaId));
+        
+        // vote_count field in database stores the total number of votes for this idea
+        idea.setVoteCount(voteCount);
+        ideaRepository.save(idea);
+        log.info("vote_count updated successfully for idea {} (total votes: {})", ideaId, voteCount);
     }
 }

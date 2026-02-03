@@ -1,0 +1,301 @@
+<!-- LAYOUT GLOBAL -->
+<div class="flex min-h-screen">
+
+  <!-- SIDEBAR (GAUCHE, HAUTEUR COMPLÈTE) -->
+  <app-sidebar class="w-64 flex-shrink-0"></app-sidebar>
+
+  <!-- ZONE DROITE -->
+  <div class="flex-1 flex flex-col ml-64">
+
+    <!-- NAVBAR (EN HAUT, SANS ESPACE) -->
+    <app-navbside></app-navbside>
+
+    <!-- MANAGER DASHBOARD CONTENT -->
+    <div class="manager-dashboard">
+      <!-- Success Message -->
+      <div *ngIf="saveMessage" class="save-message-toast">
+        {{ saveMessage }}
+      </div>
+
+      <div class="dashboard-header">
+        <h1>Manager Dashboard</h1>
+        <p class="dashboard-subtitle">Manage ideas, projects, and team assignments</p>
+      </div>
+
+  <div class="tab-navigation">
+    <button 
+      (click)="activeTab = 'ideas'" 
+      [class.active]="activeTab === 'ideas'"
+      class="tab-btn"
+    >
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+      </svg>
+      Pending Ideas
+    </button>
+    <button 
+      (click)="activeTab = 'projects'" 
+      [class.active]="activeTab === 'projects'"
+      class="tab-btn"
+    >
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
+        <polyline points="22 4 12 14.01 9 11.01"/>
+      </svg>
+      Approved Projects
+    </button>
+    <button 
+      (click)="activeTab = 'assignments'" 
+      [class.active]="activeTab === 'assignments'"
+      class="tab-btn"
+    >
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+        <circle cx="9" cy="7" r="4"/>
+        <path d="M23 21v-2a4 4 0 00-3-3.87"/>
+        <path d="M16 3.13a4 4 0 010 7.75"/>
+      </svg>
+      Team Assignments
+    </button>
+  </div>
+
+  <div class="tab-content">
+    <!-- Pending Ideas Tab -->
+    <div *ngIf="activeTab === 'ideas'" class="tab-panel">
+      <div class="section-header">
+        <h2>Ideas Pending Approval</h2>
+        <span class="badge">{{ pendingIdeas.length }} ideas</span>
+      </div>
+
+      <div *ngIf="pendingIdeas.length === 0" class="empty-state">
+        <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+        </svg>
+        <h3>No pending ideas</h3>
+        <p>All ideas have been reviewed</p>
+      </div>
+
+      <div class="ideas-grid">
+        <div 
+          *ngFor="let idea of pendingIdeas" 
+          class="idea-card"
+          [class.selected]="selectedIdea?.id === idea.id"
+          (click)="selectIdea(idea)"
+        >
+          <div class="idea-header">
+            <h3>{{ idea.title }}</h3>
+            <div class="idea-meta">
+              <span class="creator">{{ idea.creatorName }}</span>
+              <span class="votes">{{ idea.voteCount }} votes</span>
+            </div>
+          </div>
+          <p class="idea-description">{{ idea.description }}</p>
+          <div class="idea-footer">
+            <span class="score">Score: {{ idea.totalScore }}</span>
+            <span class="status-badge pending">Pending</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Idea Details Panel -->
+      <div *ngIf="selectedIdea" class="details-panel">
+        <div class="panel-header">
+          <h3>{{ selectedIdea.title }}</h3>
+          <button (click)="selectedIdea = null" class="close-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+
+        <div class="panel-content">
+          <div class="idea-details">
+            <p><strong>Creator:</strong> {{ selectedIdea.creatorName }}</p>
+            <p><strong>Created:</strong> {{ selectedIdea.creationDate | date:'mediumDate' }}</p>
+            <p><strong>Votes:</strong> {{ selectedIdea.voteCount }}</p>
+            <p><strong>Score:</strong> {{ selectedIdea.totalScore }}</p>
+          </div>
+
+          <div class="feedback-section">
+            <label for="feedback">Feedback</label>
+            <textarea 
+              id="feedback"
+              [(ngModel)]="feedbackText" 
+              placeholder="Provide feedback for this idea..."
+              rows="4"
+            ></textarea>
+          </div>
+
+          <div class="action-buttons">
+            <button (click)="rejectIdea()" class="btn-reject">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="15" y1="9" x2="9" y2="15"/>
+                <line x1="9" y1="9" x2="15" y2="15"/>
+              </svg>
+              Reject
+            </button>
+            <button (click)="submitToHR()" class="btn-hr">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
+                <polyline points="22 4 12 14.01 9 11.01"/>
+              </svg>
+              Submit to HR
+            </button>
+            <button (click)="approveIdea()" class="btn-approve">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
+                <polyline points="22 4 12 14.01 9 11.01"/>
+              </svg>
+              Approve
+            </button>
+          </div>
+
+          <div *ngIf="selectedIdea.submittedToHR" class="hr-status">
+            <div *ngIf="!selectedIdea.hrApproved" class="hr-pending">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+              </svg>
+              Pending HR Review
+            </div>
+            <div *ngIf="selectedIdea.hrApproved" class="hr-approved">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
+                <polyline points="22 4 12 14.01 9 11.01"/>
+              </svg>
+              HR Approved - Ready for Project
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Approved Projects Tab -->
+    <div *ngIf="activeTab === 'projects'" class="tab-panel">
+      <div class="section-header">
+        <h2>Approved Projects</h2>
+        <span class="badge">{{ approvedProjects.length }} projects</span>
+      </div>
+
+      <div class="projects-grid">
+        <div 
+          *ngFor="let project of approvedProjects" 
+          class="project-card"
+          [class.selected]="selectedProject?.id === project.id"
+          (click)="selectProject(project)"
+        >
+          <div class="project-header">
+            <span class="project-icon">{{ project.icon || '📋' }}</span>
+            <h3>{{ project.title }}</h3>
+          </div>
+          <p class="project-description">{{ project.description }}</p>
+          <div class="project-progress">
+            <div class="progress-bar">
+              <div class="progress-fill" [style.width.%]="project.progress"></div>
+            </div>
+            <span class="progress-text">{{ project.progress }}%</span>
+          </div>
+          <div class="project-meta">
+            <span>{{ project.ideasCount }} ideas</span>
+            <span>{{ project.votesCount }} votes</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Team Assignments Tab -->
+    <div *ngIf="activeTab === 'assignments'" class="tab-panel">
+      <div class="section-header">
+        <h2>Team Assignments</h2>
+        <span class="badge">{{ projectAssignments.length }} active assignments</span>
+      </div>
+
+      <div class="assignments-container">
+        <!-- Project Selection -->
+        <div class="assignment-section">
+          <h3>Select Project</h3>
+          <div class="project-selector">
+            <div 
+              *ngFor="let project of approvedProjects" 
+              class="project-option"
+              [class.selected]="selectedProject?.id === project.id"
+              (click)="selectProject(project)"
+            >
+              <span class="project-icon">{{ project.icon || '📋' }}</span>
+              <div class="project-info">
+                <h4>{{ project.title }}</h4>
+                <p>{{ project.description }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Team Member Assignment -->
+        <div *ngIf="selectedProject" class="assignment-section">
+          <h3>Assign Team Members to {{ selectedProject.title }}</h3>
+          
+          <div class="members-grid">
+            <div 
+              *ngFor="let member of teamMembers" 
+              class="member-card"
+              [class.selected]="newAssignmentMembers.includes(member.id)"
+              (click)="toggleMemberAssignment(member.id)"
+            >
+              <img [src]="member.avatar" [alt]="member.name" class="member-avatar">
+              <div class="member-info">
+                <h4>{{ member.name }}</h4>
+                <p>{{ member.role }} • {{ member.department }}</p>
+                <small>{{ member.email }}</small>
+              </div>
+              <div class="member-checkbox">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="assignment-actions">
+            <div class="assignment-summary">
+              <p>{{ newAssignmentMembers.length }} member(s) selected</p>
+            </div>
+            <button 
+              (click)="saveAssignment()" 
+              [disabled]="newAssignmentMembers.length === 0"
+              class="btn-save-assignment"
+            >
+              Save Assignment
+            </button>
+          </div>
+        </div>
+
+        <!-- Current Assignments -->
+        <div class="assignment-section">
+          <h3>Current Assignments</h3>
+          <div class="current-assignments">
+            <div *ngFor="let project of projectAssignments" class="assignment-card">
+              <div class="assignment-header">
+                <h4>{{ project.projectName }}</h4>
+                <span class="assignment-status">{{ project.assignedMembers.length }} members</span>
+              </div>
+              <div class="assignment-members">
+                <div *ngFor="let assignment of project.assignedMembers" class="assigned-member">
+                  <img [src]="getMemberById(assignment.userId)?.avatar" [alt]="getMemberById(assignment.userId)?.name">
+                  <span>{{ getMemberById(assignment.userId)?.name }}</span>
+                  <small>{{ assignment.role }}</small>
+                </div>
+              </div>
+              <div *ngIf="project.assignedMembers.length > 0" class="assignment-date">
+                Latest: {{ project.assignedMembers[0].assignmentDate | date:'mediumDate' }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+    </div>
+  </div>
+</div>

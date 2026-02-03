@@ -24,7 +24,6 @@ import java.util.List;
 @RequestMapping("/api/workflow")
 @RequiredArgsConstructor
 @Tag(name = "Workflow Crud Operations", description = "APIs pour les opérations CRUD du workflow")
-@CrossOrigin(origins = "*")
 public class WorkflowCrudController {
 
     private final WorkflowServiceImpl workflowService;

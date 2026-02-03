@@ -1,0 +1,185 @@
+<!-- LAYOUT GLOBAL -->
+<div class="flex min-h-screen">
+
+  <!-- SIDEBAR (GAUCHE, HAUTEUR COMPLÈTE) -->
+  <app-sidebar class="w-64 flex-shrink-0"></app-sidebar>
+
+  <!-- ZONE DROITE -->
+  <div class="flex-1 flex flex-col" style="margin-left: 16rem;">
+
+    <!-- NAVBAR (EN HAUT, SANS ESPACE) -->
+    <app-navbside></app-navbside>
+
+    <div class="feedback-page-container">
+
+    <!-- Header -->
+    <div class="feedback-container">
+      <div class="feedback-header-content">
+        <h1>Retours reçus</h1>
+        <p>Consultez les évaluations et commentaires de vos idées</p>
+      </div>
+    </div>
+
+    <!-- Filtres -->
+    <div class="filters-section">
+      <div class="search-box">
+        <input
+          type="text"
+          placeholder="Rechercher une idée..."
+          [(ngModel)]="searchTerm"
+          (input)="applyFilters()"
+          class="search-input"
+        />
+      </div>
+
+      <div class="filter-group">
+        <select [(ngModel)]="filterStatus" (change)="applyFilters()" class="filter-select">
+          <option value="all">Tous les statuts</option>
+          <option value="PENDING">En attente</option>
+          <option value="APPROVED">Approuvée</option>
+          <option value="IN_PROGRESS">En cours</option>
+          <option value="COMPLETED">Complétée</option>
+          <option value="REJECTED">Rejetée</option>
+        </select>
+
+        <select [(ngModel)]="sortBy" (change)="applyFilters()" class="filter-select">
+          <option value="recent">Récent</option>
+          <option value="votes">Votes</option>
+          <option value="feedback-count">Feedbacks</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Error -->
+    <div *ngIf="error" class="error-message">
+      Une erreur s'est produite. Veuillez réessayer.
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="loading-state">
+      <div class="spinner"></div>
+      <p>Chargement...</p>
+    </div>
+
+    <!-- Ideas -->
+    <div *ngIf="!loading && filteredIdeas.length > 0" class="ideas-grid">
+      <div
+        *ngFor="let idea of filteredIdeas"
+        class="idea-card"
+        [class.has-new-feedback]="idea.hasNewFeedback"
+        (click)="selectIdea(idea)"
+      >
+        <div *ngIf="idea.hasNewFeedback" class="new-feedback-badge">Nouveau</div>
+
+        <!-- Image -->
+        <div class="idea-image">
+          <img 
+            [src]="idea.image || getPlaceholderImage(idea.title)" 
+            [alt]="idea.title"
+            (error)="onImageError($event)"
+          />
+          
+          <!-- Status badge overlay on image -->
+          <div class="idea-status" [style.backgroundColor]="getStatusColor(idea.status)">
+            {{ getStatusIcon(idea.status) }} {{ getStatusLabel(idea.status) }}
+          </div>
+        </div>
+
+        <h3>{{ idea.title }}</h3>
+        <p class="idea-description">{{ idea.description | slice: 0:85 }}...</p>
+
+        <div class="idea-footer">
+          <span>👍 {{ idea.voteCount }}</span>
+          <span>💬 {{ idea.feedbacks.length }}</span>
+        </div>
+
+        <div class="idea-date">{{ idea.creationDate }}</div>
+      </div>
+    </div>
+
+    <!-- Empty -->
+    <div *ngIf="!loading && filteredIdeas.length === 0" class="empty-state">
+      <div class="empty-icon">💬</div>
+      <h3>Aucun retour trouvé</h3>
+      <p *ngIf="hasOrganization">
+        Vous n'avez pas encore reçu de retours pour vos idées. Continuez à proposer des idées pour obtenir des feedbacks de votre équipe !
+      </p>
+      <p *ngIf="isIndividualUser">
+        Vous n'avez pas encore rejoint d'organisation. <a href="/post-registration" class="join-link">Rejoindre une organisation</a> pour soumettre des idées et recevoir des retours.
+      </p>
+      <button (click)="router.navigate(['/dashboard'])" class="btn-primary" *ngIf="hasOrganization">
+        Créer une idée
+      </button>
+      <button (click)="navigateToJoin()" class="btn-primary" *ngIf="isIndividualUser">
+        Rejoindre une organisation
+      </button>
+    </div>
+
+    <!-- Modal -->
+    <div *ngIf="selectedIdea" class="modal-overlay" (click)="closeDetail()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <button class="close-btn" (click)="closeDetail()">✕</button>
+
+        <div class="modal-header">
+          <div class="status-bar" [style.backgroundColor]="getStatusColor(selectedIdea.status)">
+            {{ getStatusIcon(selectedIdea.status) }} {{ getStatusLabel(selectedIdea.status) }}
+          </div>
+          <h2>{{ selectedIdea.title }}</h2>
+        </div>
+
+        <div class="modal-body">
+          <div class="idea-info">
+            <p>{{ selectedIdea.description }}</p>
+            <div class="meta-info">
+              <span>📅 {{ selectedIdea.creationDate }}</span>
+              <span>👍 {{ selectedIdea.voteCount }} votes</span>
+            </div>
+          </div>
+
+          <div class="status-selector">
+            <label>Statut</label>
+            <div class="status-badge" [style.backgroundColor]="getStatusColor(selectedIdea.status)">
+              {{ getStatusIcon(selectedIdea.status) }} {{ getStatusLabel(selectedIdea.status) }}
+            </div>
+            <p class="status-info">Défini par l'équipe management</p>
+          </div>
+
+          <div class="feedbacks-section">
+            <h3>Feedbacks ({{ selectedIdea.feedbacks.length }})</h3>
+
+            <div *ngIf="selectedIdea.feedbacks.length > 0" class="feedbacks-list">
+              <div *ngFor="let fb of selectedIdea.feedbacks" class="feedback-item">
+                <div class="feedback-header-item">
+                  <span class="avatar">{{ fb.avatar }}</span>
+                  <div class="feedback-meta">
+                    <strong>{{ fb.author }}</strong>
+                    <span class="feedback-date">{{ fb.date }}</span>
+                  </div>
+                  <span class="rating">{{ getRatingStars(fb.rating) }}</span>
+                </div>
+                <p class="feedback-content">{{ fb.content }}</p>
+              </div>
+            </div>
+
+            <div *ngIf="selectedIdea.feedbacks.length === 0" class="no-feedbacks">
+              <p>Aucun feedback reçu pour le moment</p>
+              <small>Les managers et RH ajouteront leurs retours ici</small>
+            </div>
+          </div>
+
+          <div class="modal-actions">
+            <button (click)="navigateToIdea(selectedIdea.id)" class="btn-secondary">
+              Voir la page complète
+            </button>
+            <button (click)="closeDetail()" class="btn-secondary">
+              Fermer
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    </div>
+  </div>
+</div>

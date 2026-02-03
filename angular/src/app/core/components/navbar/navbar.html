@@ -6,8 +6,8 @@
     <div class="hidden md:flex items-center gap-10 text-[15px] font-semibold text-slate-600">
       <a href="#features" class="hover:text-[#915506] transition-colors">Fonctionnalités</a>
       <a href="#about" class="hover:text-[#915506] transition-colors">À propos</a>
-      <a href="#" class="text-slate-800 hover:opacity-70 transition-opacity">Connexion</a>
-      <a href="#" class="btn-primary text-white px-7 py-2.5 rounded-full shadow-lg shadow-orange-900/10">S’inscrire</a>
+      <a routerLink="/auth" class="text-slate-800 hover:opacity-70 transition-opacity">Connexion</a>
+      <a routerLink="/auth" [queryParams]="{ action: 'register' }" class="btn-primary text-white px-7 py-2.5 rounded-full shadow-lg shadow-orange-900/10">S'inscrire</a>
     </div>
   </div>
 </nav>

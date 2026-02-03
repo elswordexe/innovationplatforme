@@ -10,5 +10,11 @@ public interface BookmarkService {
 
     BookmarkDto addBookmark(BookmarkDto dto, String actorName);
 
-    void removeBookmark(Long bookmarkId);
+    void removeBookmark(Long bookmarkId, Long currentUserId);
+
+    BookmarkDto updateBookmark(Long id, BookmarkDto dto, String actorName);
+
+    long countBookmarksByIdea(Long ideaId);
+
+    boolean hasBookmarked(Long userId, Long ideaId);
 }

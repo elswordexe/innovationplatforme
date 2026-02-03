@@ -14,4 +14,7 @@ public interface UsersClient {
 
     @GetMapping("/by-email")
     UserSummary getByEmail(@RequestParam("email") String email);
+
+    @GetMapping("/{id}/name")
+    String getUserNameById(@PathVariable("id") Long id);
 }

@@ -13,4 +13,7 @@ public class AuthResponse {
     private String token;
     private String role;
     private Long userId;
+    private Long tenantId;
+    private String tenantType;
+    private String entityType;
 }

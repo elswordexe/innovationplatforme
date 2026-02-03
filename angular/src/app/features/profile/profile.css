@@ -1,0 +1,644 @@
+.profile-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: #f8f5f2;
+  min-height: 100vh;
+}
+
+.profile-header {
+  background: white;
+  border-radius: 18px;
+  padding: 3rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 20px rgba(145, 85, 6, 0.08);
+  display: flex;
+  gap: 3rem;
+  align-items: center;
+  border: 1px solid rgba(145, 85, 6, 0.1);
+}
+
+.profile-avatar-section {
+  flex-shrink: 0;
+}
+
+.avatar-container {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(145, 85, 6, 0.15);
+  background: #f0ebe5;
+  border: 4px solid #915506;
+}
+
+.profile-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.avatar-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(145, 85, 6, 0.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  cursor: pointer;
+}
+
+.avatar-container:hover .avatar-overlay {
+  opacity: 1;
+}
+
+.upload-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.upload-label:hover {
+  transform: scale(1.05);
+}
+
+.camera-icon {
+  width: 32px;
+  height: 32px;
+  stroke-width: 2;
+}
+
+.file-input {
+  display: none;
+}
+
+.remove-photo-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #915506;
+  transition: all 0.2s ease;
+}
+
+.remove-photo-btn:hover {
+  background: white;
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(145, 85, 6, 0.2);
+}
+
+.remove-photo-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.profile-info {
+  flex: 1;
+}
+
+.info-display h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #915506;
+  margin: 0 0 0.5rem 0;
+  letter-spacing: -0.02em;
+}
+
+.profile-email {
+  font-size: 1.125rem;
+  color: #666;
+  margin: 0 0 0.5rem 0;
+}
+
+.profile-meta {
+  font-size: 1rem;
+  color: #888;
+  margin: 0 0 2rem 0;
+}
+
+.edit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #915506;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.edit-btn:hover {
+  background: #c07a1a;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(145, 85, 6, 0.2);
+}
+
+.edit-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.info-edit {
+  max-width: 500px;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #915506;
+  margin-bottom: 0.5rem;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  border: 2px solid #e5ddd5;
+  border-radius: 12px;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  background: white;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #915506;
+  box-shadow: 0 0 0 4px rgba(145, 85, 6, 0.1);
+}
+
+.form-input:disabled {
+  background: #f8f5f2;
+  color: #888;
+  cursor: not-allowed;
+}
+
+.form-hint {
+  display: block;
+  font-size: 0.75rem;
+  color: #888;
+  margin-top: 0.25rem;
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.btn-cancel {
+  padding: 0.75rem 1.5rem;
+  border: 2px solid #915506;
+  background: white;
+  color: #915506;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-cancel:hover {
+  background: #f8f5f2;
+}
+
+.btn-save {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  background: #915506;
+  color: white;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-save:hover:not(:disabled) {
+  background: #c07a1a;
+}
+
+.btn-save:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.profile-content {
+  display: grid;
+  gap: 2rem;
+}
+
+.content-section {
+  background: white;
+  border-radius: 18px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(145, 85, 6, 0.08);
+  border: 1px solid rgba(145, 85, 6, 0.1);
+}
+
+.content-section h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #915506;
+  margin: 0 0 1.5rem 0;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.info-item {
+  padding: 1rem;
+  background: #f8f5f2;
+  border-radius: 12px;
+  border: 1px solid rgba(145, 85, 6, 0.1);
+}
+
+.info-item label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #915506;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.5rem;
+}
+
+.info-item p {
+  font-size: 1rem;
+  color: #333;
+  margin: 0;
+  font-weight: 500;
+}
+
+.preferences-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.preference-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem;
+  background: #f8f5f2;
+  border-radius: 12px;
+  border: 1px solid rgba(145, 85, 6, 0.1);
+}
+
+.preference-info h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #915506;
+  margin: 0 0 0.25rem 0;
+}
+
+.preference-info p {
+  font-size: 0.875rem;
+  color: #666;
+  margin: 0;
+}
+
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 51px;
+  height: 31px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #e5ddd5;
+  transition: 0.3s;
+  border-radius: 31px;
+}
+
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 25px;
+  width: 25px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.3s;
+  border-radius: 50%;
+}
+
+input:checked + .toggle-slider {
+  background-color: #915506;
+}
+
+input:checked + .toggle-slider:before {
+  transform: translateX(20px);
+}
+
+@media (max-width: 768px) {
+  .profile-container {
+    padding: 1rem;
+  }
+
+  .profile-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 2rem;
+    padding: 2rem;
+  }
+
+  .avatar-container {
+    width: 150px;
+    height: 150px;
+  }
+
+  .info-display h1 {
+    font-size: 2rem;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .preference-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+}
+
+/* === IMAGE STORAGE SECTION === */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.toggle-btn {
+  background: #915506;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.toggle-btn:hover {
+  background: #7a4705;
+  transform: translateY(-1px);
+}
+
+.image-storage-container {
+  margin-top: 1rem;
+}
+
+.upload-area {
+  border: 2px dashed #915506;
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  margin-bottom: 1.5rem;
+}
+
+.upload-area:hover {
+  border-color: #c07a1a;
+  background: rgba(145, 85, 6, 0.02);
+}
+
+.upload-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.upload-icon {
+  width: 48px;
+  height: 48px;
+  color: #915506;
+}
+
+.upload-label span {
+  font-weight: 500;
+  color: #915506;
+}
+
+.upload-label small {
+  color: #666;
+  font-size: 0.85rem;
+}
+
+.file-input {
+  display: none;
+}
+
+.storage-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding: 0.75rem;
+  background: rgba(145, 85, 6, 0.05);
+  border-radius: 8px;
+}
+
+.image-count {
+  font-weight: 500;
+  color: #915506;
+}
+
+.clear-btn {
+  background: #d93025;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.clear-btn:hover {
+  background: #c72920;
+}
+
+.images-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.image-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(145, 85, 6, 0.1);
+  transition: all 0.3s ease;
+}
+
+.image-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(145, 85, 6, 0.15);
+}
+
+.image-preview {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  background: #f8f5f2;
+}
+
+.image-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.image-card:hover .image-preview img {
+  transform: scale(1.05);
+}
+
+.image-info {
+  padding: 1rem;
+}
+
+.image-name {
+  font-weight: 500;
+  color: #333;
+  margin: 0 0 0.25rem 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.image-meta {
+  font-size: 0.85rem;
+  color: #666;
+  margin: 0;
+}
+
+.image-actions {
+  display: flex;
+  padding: 0 1rem 1rem;
+  gap: 0.5rem;
+}
+
+.image-actions button {
+  flex: 1;
+  padding: 0.5rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-actions button svg {
+  width: 16px;
+  height: 16px;
+}
+
+.use-profile-btn {
+  background: #915506;
+  color: white;
+}
+
+.use-profile-btn:hover {
+  background: #7a4705;
+}
+
+.download-btn {
+  background: #34c759;
+  color: white;
+}
+
+.download-btn:hover {
+  background: #2fb84d;
+}
+
+.delete-btn {
+  background: #d93025;
+  color: white;
+}
+
+.delete-btn:hover {
+  background: #c72920;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem 2rem;
+  color: #666;
+}
+
+.empty-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 1rem;
+  color: #ccc;
+}
+
+.empty-state p {
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin: 0 0 0.5rem 0;
+  color: #333;
+}
+
+.empty-state small {
+  font-size: 0.9rem;
+  color: #666;
+}

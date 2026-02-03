@@ -1,0 +1,135 @@
+:root {
+      /* === Tes couleurs de marque – conservées === */
+      --brand: #915506;
+      --brand-dark: #6b3f04;
+      --brand-soft: rgba(145, 85, 6, 0.10);
+      --brand-glow: rgba(145, 85, 6, 0.30);
+      --brand-gradient: linear-gradient(180deg, #915506, #6b3f04);
+
+      /* Neutres Apple-inspired (mais sans écraser la marque) */
+      --bg-light: #f5f5f7;
+      --card-light: rgba(255,255,255,0.82);
+      --border-light: rgba(0,0,0,0.08);
+
+      --bg-dark: #0f0f12;
+      --card-dark: rgba(28,28,32,0.82);
+      --border-dark: rgba(255,255,255,0.11);
+
+      --text: #1d1d1f;
+      --text-sub: #6e6e73;
+      --text-muted: #8e8e93;
+    }
+
+    [data-theme="dark"] {
+      --text: #f5f5f7;
+      --text-sub: #a1a1a6;
+      --text-muted: #8a8a90;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", Inter, system-ui, sans-serif;
+      background: linear-gradient(to bottom, var(--bg-light), #fefefe);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      min-height: 100vh;
+    }
+
+    [data-theme="dark"] body {
+      background: linear-gradient(to bottom, var(--bg-dark), #000);
+    }
+
+    .hero-title {
+      font-size: clamp(3.5rem, 8vw, 5rem);
+      font-weight: 700;
+      letter-spacing: -0.045em;
+      line-height: 1.02;
+      background: linear-gradient(165deg, var(--brand) 10%, var(--brand-dark) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .glass {
+      background: var(--card-light);
+      backdrop-filter: saturate(180%) blur(28px);
+      -webkit-backdrop-filter: saturate(180%) blur(28px);
+      border: 1px solid var(--border-light);
+      box-shadow: 0 20px 60px -15px rgba(0,0,0,0.12);
+    }
+
+    [data-theme="dark"] .glass {
+      background: var(--card-dark);
+      border-color: var(--border-dark);
+      box-shadow: 0 20px 60px -15px rgba(0,0,0,0.6);
+    }
+
+    .fade-in {
+      opacity: 0;
+      transform: translateY(18px);
+      animation: fadeUp 0.9s cubic-bezier(0.22,1,0.36,1) forwards;
+    }
+
+    @keyframes fadeUp {
+      to { opacity:1; transform:translateY(0); }
+    }
+
+    .apple-input {
+      border-radius: 1rem;
+      padding: 1rem 1.25rem;
+      border: 1px solid var(--border-light);
+      background: rgba(255,255,255,0.65);
+      color: var(--text);
+      transition: all 0.2s ease;
+    }
+
+    [data-theme="dark"] .apple-input {
+      background: rgba(40,40,45,0.65);
+      border-color: var(--border-dark);
+      color: var(--text);
+    }
+
+    .apple-input:focus {
+      outline: none;
+      border-color: var(--brand);
+      box-shadow: 0 0 0 4px var(--brand-soft);
+      background: white;
+    }
+
+    [data-theme="dark"] .apple-input:focus {
+      background: rgba(50,50,55,0.9);
+    }
+
+    .apple-button {
+      border-radius: 1rem;
+      padding: 1rem;
+      font-weight: 600;
+      background: var(--brand-gradient);
+      color: white;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 12px var(--brand-soft);
+    }
+
+    .apple-button:hover {
+      transform: translateY(-1.5px);
+      box-shadow: 0 14px 36px var(--brand-glow);
+      filter: brightness(1.06);
+    }
+
+    .apple-button:active {
+      transform: translateY(0);
+      filter: brightness(0.94);
+    }
+
+    .tab-active {
+      background: white;
+      color: var(--text);
+      font-weight: 600;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    [data-theme="dark"] .tab-active {
+      background: rgba(255,255,255,0.12);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    }
+  

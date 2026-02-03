@@ -3,6 +3,7 @@ package com.example.gateway.Config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
@@ -26,12 +27,16 @@ public class SecurityConfig {
         http
             .csrf(ServerHttpSecurity.CsrfSpec::disable)
             .authorizeExchange(exchanges -> exchanges
+                .pathMatchers(HttpMethod.OPTIONS).permitAll()
                 .pathMatchers(
                         "/v3/api-docs/**",
                         "/swagger-ui.html",
                         "/swagger-ui/**",
                         "/actuator/**",
-                        "/api/auth/**"
+                        "/api/auth/**",
+                        "/api/onboarding/redeem",
+                        "/api/onboarding/sso/**",
+                        "/api/notifications/**"
                 ).permitAll()
                 .anyExchange().authenticated()
             )
@@ -57,11 +62,18 @@ public class SecurityConfig {
                     String username = jwt.getSubject();
                     Object userId = jwt.getClaims().get("userId");
                     Object role = jwt.getClaims().get("role");
+                    Object tenantId = jwt.getClaims().get("tenantId");
+                    Object tenantType = jwt.getClaims().get("tenantType");
+                    Object entityType = jwt.getClaims().get("entityType");
+                    
                     var mutated = exchange.getRequest().mutate()
                             .header("X-User-Name", username != null ? username : "")
                             .headers(h -> {
                                 if (userId != null) h.set("X-User-Id", String.valueOf(userId));
                                 if (role != null) h.set("X-User-Role", String.valueOf(role));
+                                if (tenantId != null) h.set("X-Tenant-Id", String.valueOf(tenantId));
+                                if (tenantType != null) h.set("X-Tenant-Type", String.valueOf(tenantType));
+                                if (entityType != null) h.set("X-Entity-Type", String.valueOf(entityType));
                             })
                             .build();
                     return chain.filter(exchange.mutate().request(mutated).build());
@@ -71,3 +83,4 @@ public class SecurityConfig {
             .switchIfEmpty(chain.filter(exchange));
     }
 }
+

@@ -22,4 +22,6 @@ public interface VoteRepository extends JpaRepository<Vote, Long> {
 
     // 🆕 HAS VOTED
     boolean existsByUserIdAndIdeaId(Long userId, Long ideaId);
+
+    Vote findByUserIdAndIdeaId(Long userId, Long ideaId);
 }

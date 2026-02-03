@@ -30,4 +30,5 @@ public class IdeaDTO {
     private List<Attachment> attachments;
     private Integer voteCount;
     private Boolean isInTop10;
+    private String coverImageUrl; // URL de l'image de couverture
 }

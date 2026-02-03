@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/ideas")
 @RequiredArgsConstructor
 @Tag(name = "Idea Status Management", description = "APIs pour la gestion des statuts des idées")
-@CrossOrigin(origins = "*")
 public class IdeaStatusController {
     private final IdeaServiceImpl ideaService;
 

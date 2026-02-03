@@ -17,16 +17,21 @@ public interface IdeaRepository extends JpaRepository<Idea, Long> {
     List<Idea> findByStatus(IdeaStatus status);
     List<Idea> findByCreatorId(Long creatorId);
     List<Idea> findByOrganizationId(Long organizationId);
-    @Query("SELECT i FROM Idea i WHERE " +
+
+    // Org-scoped queries
+    List<Idea> findByCreatorIdAndOrganizationId(Long creatorId, Long organizationId);
+    List<Idea> findByStatusAndOrganizationId(IdeaStatus status, Long organizationId);
+
+    @Query("SELECT i FROM Idea i WHERE i.organizationId = :orgId AND (" +
             "LOWER(i.title) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
-            "LOWER(i.description) LIKE LOWER(CONCAT('%', :keyword, '%'))")
-    List<Idea> searchByKeyword(@Param("keyword") String keyword);
+            "LOWER(i.description) LIKE LOWER(CONCAT('%', :keyword, '%')))")
+    List<Idea> searchByKeywordInOrg(@Param("keyword") String keyword, @Param("orgId") Long orgId);
 
-    @Query("SELECT i FROM Idea i WHERE i.totalScore >= :minScore ORDER BY i.totalScore DESC")
-    List<Idea> findIdeasWithMinScore(@Param("minScore") Integer minScore);
+    @Query("SELECT i FROM Idea i WHERE i.totalScore >= :minScore AND i.organizationId = :orgId ORDER BY i.totalScore DESC")
+    List<Idea> findIdeasWithMinScoreInOrg(@Param("minScore") Integer minScore, @Param("orgId") Long orgId);
 
-    @Query("SELECT i FROM Idea i ORDER BY i.totalScore DESC")
-    Page<Idea> findTopIdeas(Pageable pageable);
+    @Query("SELECT i FROM Idea i WHERE i.organizationId = :orgId ORDER BY i.totalScore DESC")
+    Page<Idea> findTopIdeasInOrg(@Param("orgId") Long orgId, Pageable pageable);
 
     Long countByStatus(IdeaStatus status);
 

@@ -15,7 +15,9 @@ public interface VoteService {
 
     List<VoteDto> getVotesByIdea(Long ideaId);
 
-    void deleteVote(Long id);
+    void deleteVote(Long id, Long currentUserId);
+
+    VoteDto updateVote(Long id, VoteDto dto, String actorName);
 
     // 🆕 COUNT
     long countVotesByIdea(Long ideaId);

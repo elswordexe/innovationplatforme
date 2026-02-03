@@ -1,0 +1,164 @@
+/* voted-idea-card.component.css */
+
+.card {
+  background: var(--card-light, rgba(255,255,255,0.82));
+  border: 1px solid var(--border-light, rgba(0,0,0,0.08));
+  border-radius: 1.25rem;
+  overflow: hidden;
+  backdrop-filter: blur(28px);
+  box-shadow: 0 20px 60px -15px rgba(0,0,0,0.12);
+  transition: all 0.25s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 30px 80px -20px rgba(0,0,0,0.18);
+}
+
+.card:active {
+  transform: translateY(-2px);
+}
+
+.image-wrapper {
+  height: 176px;
+  overflow: hidden;
+  position: relative;
+}
+
+.image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.card:hover .image-wrapper img {
+  transform: scale(1.05);
+}
+
+/* Vote Indicator */
+.vote-indicator {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255,255,255,0.9);
+  transition: all 0.2s ease;
+}
+
+.vote-indicator.upvote {
+  background: rgba(34,197,94,0.9);
+  color: white;
+}
+
+.vote-indicator.downvote {
+  background: rgba(239,68,68,0.9);
+  color: white;
+}
+
+.vote-icon {
+  font-size: 16px;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2));
+}
+
+.content {
+  padding: 1.5rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.header h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.3;
+  margin: 0;
+}
+
+.description {
+  margin-top: 0.75rem;
+  font-size: 0.875rem;
+  color: var(--text-sub);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.5;
+}
+
+.meta {
+  margin-top: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.footer {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+/* Badges */
+.badge {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+.badge-top {
+  background: var(--brand-soft);
+  color: var(--brand);
+}
+
+.badge-status {
+  background: rgba(0,0,0,0.05);
+}
+
+.badge-budget {
+  background: rgba(34,197,94,0.15);
+  color: rgb(21,128,61);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .card {
+    margin-bottom: 1rem;
+  }
+  
+  .image-wrapper {
+    height: 140px;
+  }
+  
+  .content {
+    padding: 1rem;
+  }
+  
+  .vote-indicator {
+    width: 32px;
+    height: 32px;
+    top: 8px;
+    right: 8px;
+  }
+  
+  .vote-icon {
+    font-size: 14px;
+  }
+}

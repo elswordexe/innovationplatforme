@@ -1,0 +1,64 @@
+<div class="reports-container flex-1 relative">
+  <!-- Header -->
+  <div class="reports-header">
+    <h1>Reports</h1>
+  </div>
+
+  <!-- Filters Row -->
+  <div class="filters-row">
+    <div class="filter-group">
+      <label>Timeframe:</label>
+      <select [(ngModel)]="selectedTimeframe" class="filter-select">
+        <option *ngFor="let option of timeframeOptions" [value]="option">{{ option }}</option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label>People:</label>
+      <select [(ngModel)]="selectedPeople" class="filter-select">
+        <option *ngFor="let option of peopleOptions" [value]="option">{{ option }}</option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label>Topic:</label>
+      <select [(ngModel)]="selectedTopic" class="filter-select">
+        <option *ngFor="let option of topicOptions" [value]="option">{{ option }}</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Top Metrics Row -->
+  <div class="metrics-row">
+    <div class="metric-card" *ngFor="let card of metricCards">
+      <div class="metric-label">{{ card.label }}</div>
+      <div class="metric-value">
+        {{ card.value }}<span class="metric-suffix" *ngIf="card.suffix">{{ card.suffix }}</span>
+      </div>
+    </div>
+
+    <!-- Activity Chart Card -->
+    <div class="activity-card">
+      <div class="activity-label">Activité</div>
+      <div class="activity-chart">
+        <div class="activity-y-axis">
+          <span>400</span>
+          <span>300</span>
+          <span>200</span>
+          <span>100</span>
+          <span>0</span>
+        </div>
+        <div class="activity-bars">
+          <div class="activity-bar-group" *ngFor="let data of activityData">
+            <div class="activity-bar" [style.height.%]="getActivityBarHeight(data.value)"></div>
+            <span class="activity-month">{{ data.month }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+
+  
+</div>

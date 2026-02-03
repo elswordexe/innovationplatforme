@@ -15,6 +15,10 @@ public class IdeaClient {
         return idea != null ? idea.getCreatorId() : null;
     }
 
+    public void updateVoteCount(Long ideaId, int voteCount) {
+        restTemplate.put("http://ideaservice/api/ideas/" + ideaId + "/voteCount", voteCount);
+    }
+
     @lombok.Data
     public static class IdeaSummary {
         private Long id;

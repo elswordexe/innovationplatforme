@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { Dash } from './dash';
+import { Auth } from './auth';
 
-describe('Dash', () => {
-  let component: Dash;
-  let fixture: ComponentFixture<Dash>;
+describe('Auth', () => {
+  let component: Auth;
+  let fixture: ComponentFixture<Auth>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Dash]
+      imports: [Auth]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(Dash);
+    fixture = TestBed.createComponent(Auth);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

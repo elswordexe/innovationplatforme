@@ -20,7 +20,6 @@ import java.util.List;
 @RequestMapping("/api/ideas")
 @RequiredArgsConstructor
 @Tag(name = "Idea Search", description = "APIs pour la recherche et le filtrage des idées")
-@CrossOrigin(origins = "*")
 public class IdeaSearchController {
     private final IdeaServiceImpl ideaService;
 
@@ -32,20 +31,29 @@ public class IdeaSearchController {
     })
     public ResponseEntity<List<IdeaDTO>> getIdeasByStatus(
             @Parameter(description = "Statut des idées", required = true, example = "SUBMITTED")
-            @PathVariable IdeaStatus status) {
-        return ResponseEntity.ok(ideaService.getIdeasByStatus(status));
+            @PathVariable IdeaStatus status,
+            @RequestHeader(value = "X-Tenant-Id", required = false) Long orgId) {
+        if (orgId == null) {
+            return ResponseEntity.status(org.springframework.http.HttpStatus.UNAUTHORIZED).build();
+        }
+        return ResponseEntity.ok(ideaService.getIdeasByStatusInOrg(status, orgId));
     }
 
     @GetMapping("/creator/{creatorId}")
-    @Operation(summary = "Récupérer les idées par créateur", description = "Retourne toutes les idées créées par un utilisateur spécifique")
+    @Operation(summary = "Récupérer les idées par créateur (org)", description = "Retourne les idées d'un utilisateur dans l'organisation courante")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Idées récupérées avec succès",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = List.class)))
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = List.class))),
+            @ApiResponse(responseCode = "401", description = "En-têtes manquants", content = @Content)
     })
     public ResponseEntity<List<IdeaDTO>> getIdeasByCreator(
             @Parameter(description = "ID du créateur", required = true, example = "1")
-            @PathVariable Long creatorId) {
-        return ResponseEntity.ok(ideaService.getIdeasByCreator(creatorId));
+            @PathVariable Long creatorId,
+            @RequestHeader(value = "X-Tenant-Id", required = false) Long orgId) {
+        if (orgId == null) {
+            return ResponseEntity.status(org.springframework.http.HttpStatus.UNAUTHORIZED).build();
+        }
+        return ResponseEntity.ok(ideaService.getIdeasByCreatorAndOrg(creatorId, orgId));
     }
 
     @GetMapping("/organization/{organizationId}")
@@ -57,28 +65,39 @@ public class IdeaSearchController {
     public ResponseEntity<List<IdeaDTO>> getIdeasByOrganization(
             @Parameter(description = "ID de l'organisation", required = true, example = "1")
             @PathVariable Long organizationId) {
+        // Optionnel: garder pour compat rétro; sinon, on pourrait imposer que organizationId == X-Tenant-Id
         return ResponseEntity.ok(ideaService.getIdeasByOrganization(organizationId));
     }
 
     @GetMapping("/search")
-    @Operation(summary = "Rechercher des idées", description = "Recherche des idées par mot-clé dans le titre ou la description")
+    @Operation(summary = "Rechercher des idées (org)", description = "Recherche des idées par mot-clé dans l'organisation courante")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Recherche effectuée avec succès",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = List.class)))
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = List.class))),
+            @ApiResponse(responseCode = "401", description = "En-têtes manquants", content = @Content)
     })
     public ResponseEntity<List<IdeaDTO>> searchIdeas(
             @Parameter(description = "Mot-clé de recherche", required = true, example = "innovation")
-            @RequestParam String keyword){
-        return ResponseEntity.ok(ideaService.searchIdeas(keyword));
+            @RequestParam String keyword,
+            @RequestHeader(value = "X-Tenant-Id", required = false) Long orgId){
+        if (orgId == null) {
+            return ResponseEntity.status(org.springframework.http.HttpStatus.UNAUTHORIZED).build();
+        }
+        return ResponseEntity.ok(ideaService.searchIdeasInOrg(keyword, orgId));
     }
 
     @GetMapping("/top10")
-    @Operation(summary = "Récupérer le top 10 des idées", description = "Retourne les 10 idées ayant les meilleurs scores")
+    @Operation(summary = "Récupérer le top 10 des idées (org)", description = "Retourne les 10 idées ayant les meilleurs scores dans l'organisation courante")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Top 10 récupéré avec succès",
-                    content = @Content(mediaType = "application/json"))
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "401", description = "En-têtes manquants", content = @Content)
     })
-    public ResponseEntity<List<IdeaDTO>> getTop10Ideas() {
-        return ResponseEntity.ok(ideaService.getTop10Ideas());
+    public ResponseEntity<List<IdeaDTO>> getTop10Ideas(
+            @RequestHeader(value = "X-Tenant-Id", required = false) Long orgId) {
+        if (orgId == null) {
+            return ResponseEntity.status(org.springframework.http.HttpStatus.UNAUTHORIZED).build();
+        }
+        return ResponseEntity.ok(ideaService.getTop10IdeasInOrg(orgId));
     }
 }

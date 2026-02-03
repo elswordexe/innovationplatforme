@@ -1,6 +1,7 @@
 package com.example.ideaservice.Model.entities;
 
 import com.example.ideaservice.Model.enums.IdeaStatus;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,12 +27,16 @@ public class Idea {
     private Long creatorId;
     private Long organizationId;
     private LocalDateTime creationDate;
-    private IdeaStatus status = IdeaStatus.DRAFT;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private IdeaStatus status ;
     private Integer totalScore = 0;
     private Boolean budgetApproved = false;
     private List<Long> assignedTeamIds = new ArrayList<>();
     @OneToMany(mappedBy = "idea", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference
     private List<Attachment> attachments = new ArrayList<>();
+    // vote_count field in database - stores the total number of votes (likes) for this idea
     private Integer voteCount;
     private Boolean isInTop10;
     public void addTeamMember(Long userId) {

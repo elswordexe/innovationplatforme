@@ -1,0 +1,218 @@
+<!-- LAYOUT GLOBAL -->
+<div class="flex min-h-screen">
+
+  <!-- SIDEBAR (GAUCHE, HAUTEUR COMPLÈTE) -->
+  <app-sidebar class="w-64 flex-shrink-0"></app-sidebar>
+
+  <!-- ZONE DROITE -->
+  <div class="flex-1 flex flex-col ml-64">
+
+    <!-- NAVBAR (EN HAUT, SANS ESPACE) -->
+    <app-navbside></app-navbside>
+
+    <!-- PROFILE CONTENT -->
+    <div class="profile-container">
+  <div class="profile-header">
+    <div class="profile-avatar-section">
+      <div class="avatar-container">
+        <img [src]="previewUrl" [alt]="profile.name" class="profile-avatar" />
+        <div *ngIf="isEditing" class="avatar-overlay">
+          <label for="file-upload" class="upload-label">
+            <svg class="camera-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
+              <circle cx="12" cy="13" r="4"/>
+            </svg>
+            <span>Change Photo</span>
+          </label>
+          <input id="file-upload" type="file" (change)="onFileSelected($event)" accept="image/*" class="file-input" />
+          <button *ngIf="selectedFile" (click)="removePicture()" class="remove-photo-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="profile-info">
+      <div *ngIf="!isEditing" class="info-display">
+        <h1 class="profile-name">{{ profile.name }}</h1>
+        <p class="profile-email">{{ profile.email }}</p>
+        <p class="profile-meta">{{ profile.department }} • Joined {{ profile.joinDate }}</p>
+        <button (click)="enableEdit()" class="edit-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+            <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+          </svg>
+          Edit Profile
+        </button>
+      </div>
+
+      <div *ngIf="isEditing" class="info-edit">
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input 
+            id="name" 
+            type="text" 
+            [(ngModel)]="editedName" 
+            class="form-input"
+            placeholder="Enter your name"
+          />
+        </div>
+        
+        <div class="form-group">
+          <label>Email</label>
+          <input 
+            type="email" 
+            [value]="profile.email" 
+            class="form-input"
+            disabled
+          />
+          <small class="form-hint">Email cannot be changed</small>
+        </div>
+
+        <div class="form-actions">
+          <button (click)="cancelEdit()" class="btn-cancel">Cancel</button>
+          <button (click)="saveProfile()" [disabled]="isUploading" class="btn-save">
+            <span *ngIf="!isUploading">Save Changes</span>
+            <span *ngIf="isUploading">Saving...</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="profile-content">
+    <div class="content-section">
+      <h2>Account Information</h2>
+      <div class="info-grid">
+        <div class="info-item">
+          <label>Full Name</label>
+          <p>{{ profile.name }}</p>
+        </div>
+        <div class="info-item">
+          <label>Email Address</label>
+          <p>{{ profile.email }}</p>
+        </div>
+        <div class="info-item">
+          <label>Department</label>
+          <p>{{ profile.department }}</p>
+        </div>
+        <div class="info-item">
+          <label>Member Since</label>
+          <p>{{ profile.joinDate }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h2>Preferences</h2>
+      <div class="preferences-list">
+        <div class="preference-item">
+          <div class="preference-info">
+            <h3>Email Notifications</h3>
+            <p>Receive updates about your ideas and projects</p>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="preference-item">
+          <div class="preference-info">
+            <h3>Public Profile</h3>
+            <p>Allow others to see your profile information</p>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- IMAGE STORAGE SECTION -->
+    <div class="content-section">
+      <div class="section-header">
+        <h2>Stockage d'Images</h2>
+        <button (click)="toggleImageStorageMode()" class="toggle-btn">
+          {{ isImageStorageMode ? 'Masquer' : 'Afficher' }}
+        </button>
+      </div>
+
+      <div *ngIf="isImageStorageMode" class="image-storage-container">
+        <!-- Upload Area -->
+        <div class="upload-area">
+          <label for="image-upload" class="upload-label">
+            <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+              <polyline points="17,8 12,3 7,8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+            <span>Cliquez pour sélectionner une image</span>
+            <small>ou glissez-déposez ici</small>
+          </label>
+          <input id="image-upload" type="file" (change)="onImageFileSelected($event)" 
+                 accept="image/*" class="file-input" />
+        </div>
+
+        <!-- Actions Bar -->
+        <div class="storage-actions" *ngIf="storedImages.length > 0">
+          <span class="image-count">{{ storedImages.length }} image(s) stockée(s)</span>
+          <button (click)="clearAllStoredImages()" class="clear-btn">Tout supprimer</button>
+        </div>
+
+        <!-- Stored Images Grid -->
+        <div class="images-grid" *ngIf="storedImages.length > 0">
+          <div class="image-card" *ngFor="let image of storedImages">
+            <div class="image-preview">
+              <img [src]="image.data" [alt]="image.name" />
+            </div>
+            <div class="image-info">
+              <p class="image-name">{{ image.name }}</p>
+              <p class="image-meta">{{ image.size | fileSize }} • {{ image.type }}</p>
+            </div>
+            <div class="image-actions">
+              <button (click)="useStoredImageAsProfile(image.data)" 
+                      class="use-profile-btn" title="Utiliser comme photo de profil">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+                  <circle cx="12" cy="7" r="4"/>
+                </svg>
+              </button>
+              <button (click)="downloadStoredImage(image)" 
+                      class="download-btn" title="Télécharger">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                  <polyline points="7,10 12,15 17,10"/>
+                  <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+              </button>
+              <button (click)="deleteStoredImage(image.id)" 
+                      class="delete-btn" title="Supprimer">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="3,6 5,6 21,6"/>
+                  <path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a2,2,0,0,1,2-2h4a2,2,0,0,1,2,2v2"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" *ngIf="storedImages.length === 0">
+          <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+            <circle cx="8.5" cy="8.5" r="1.5"/>
+            <polyline points="21,15 16,10 5,21"/>
+          </svg>
+          <p>Aucune image stockée</p>
+          <small>Upload des images pour les convertir en base64 et les stocker localement</small>
+        </div>
+      </div>
+    </div>
+  </div>
+    </div>
+  </div>
+</div>

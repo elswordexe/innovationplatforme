@@ -1,0 +1,53 @@
+<article class="card">
+
+  <!-- Image -->
+  <div class="image-wrapper">
+    <img
+      [src]="idea.coverImageUrl || getPlaceholderImage(idea.title)"
+      [alt]="idea.title"
+      (error)="onImageError($event)"
+    />
+  </div>
+
+  <!-- Content -->
+  <div class="content">
+    <div class="header">
+      <h3>{{ idea.title }}</h3>
+
+      <span
+        *ngIf="idea.isInTop10"
+        class="badge badge-top">
+        Top 10
+      </span>
+    </div>
+
+    <p class="description">
+      {{ idea.description }}
+    </p>
+
+    <!-- Meta -->
+    <div class="meta">
+      <span>Score · {{ idea.totalScore }}</span>
+      <span>Votes · {{ idea.voteCount }}</span>
+
+      <span class="badge badge-status">
+        {{ idea.status }}
+      </span>
+
+      <span
+        *ngIf="idea.budgetApproved"
+        class="badge badge-budget">
+        Budget approuvé
+      </span>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <span>{{ formattedDate }}</span>
+      <span *ngIf="idea.attachments?.length">
+        {{ idea.attachments?.length }} pièce(s) jointe(s)
+      </span>
+    </div>
+  </div>
+
+</article>

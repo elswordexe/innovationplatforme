@@ -1,0 +1,137 @@
+<div class="idea-detail-container">
+  <!-- Header -->
+  <button class="back-btn" (click)="goBack()">← Retour</button>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading">
+    <div class="spinner"></div>
+    <p>Chargement des détails...</p>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="error && !loading" class="error-box">
+    <p>❌ Impossible de charger les détails de l'idée</p>
+  </div>
+
+  <!-- Content -->
+  <div *ngIf="!loading && !error && idea" class="idea-content">
+
+    <!-- Image/Hero -->
+    <div class="idea-hero">
+      <img 
+        [src]="idea.image || getPlaceholderImage(idea.title)" 
+        [alt]="idea.title" 
+        class="hero-image"
+        (error)="onImageError($event)" 
+      />
+      <div class="hero-overlay">
+        <span class="status-badge" [class]="idea.details.status.toLowerCase()">
+          {{ idea.details.status }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="idea-main">
+
+      <!-- Title & Meta -->
+      <div class="idea-header-section">
+        <h1 class="idea-title">{{ idea.title }}</h1>
+        <div class="idea-meta">
+          <span class="meta-item">👤 {{ idea.creatorName }}</span>
+          <span class="meta-item">📅 {{ idea.details.dateCreated }}</span>
+          <span class="meta-item">🏷️ {{ idea.details.category }}</span>
+          <span class="meta-item">👍 {{ idea.details.votes }} votes</span>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="section">
+        <h2 class="section-title">Description</h2>
+        <p class="description-text">{{ idea.description }}</p>
+      </div>
+
+      <!-- Attachments -->
+      <div class="section" *ngIf="idea.attachments && idea.attachments.length > 0">
+        <h2 class="section-title">📎 Attachements ({{ idea.attachments.length }})</h2>
+        <div class="attachments-list">
+          <div class="attachment-item" *ngFor="let attachment of idea.attachments; let i = index">
+            <span class="attachment-icon" [title]="attachment.fileType || 'Fichier'">
+              {{ getFileIcon(attachment.fileType || attachment.fileName) }}
+            </span>
+            <span class="attachment-name" [title]="attachment.fileName">{{ attachment.fileName }}</span>
+            <span class="attachment-size" *ngIf="attachment.fileSize">
+              {{ formatFileSize(attachment.fileSize) }}
+            </span>
+            <button 
+              class="download-btn" 
+              (click)="downloadAttachment(attachment)"
+              title="Télécharger">
+              ↓
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Comments Section -->
+      <div class="section comments-section">
+        <h2 class="section-title">💬 Commentaires ({{ comments.length }})</h2>
+
+        <!-- Add Comment -->
+        <div class="add-comment-box">
+          <!-- Error message -->
+          <div *ngIf="commentSubmitError" class="comment-error">
+            <p>⚠️ {{ commentSubmitError }}</p>
+          </div>
+
+          <textarea
+            class="comment-input"
+            [(ngModel)]="newComment"
+            placeholder="Ajouter un commentaire..."
+            rows="3"
+            [disabled]="isSubmittingComment">
+          </textarea>
+
+          <button
+            class="submit-comment-btn"
+            [disabled]="!newComment.trim() || isSubmittingComment"
+            (click)="addComment()">
+            <span *ngIf="!isSubmittingComment">✓ Publier</span>
+            <span *ngIf="isSubmittingComment">
+              <span class="btn-spinner"></span> Publication...
+            </span>
+          </button>
+        </div>
+
+        <!-- Comments List -->
+        <div class="comments-list">
+          <div class="comment-item" *ngFor="let comment of comments">
+            <div class="comment-header">
+              <span class="comment-avatar">{{ comment.authorAvatar || '👤' }}</span>
+              <div class="comment-info">
+                <span class="comment-author">{{ comment.authorName }}</span>
+                <span class="comment-date">{{ comment.createdAt | date:'shortDate' }}</span>
+              </div>
+            </div>
+            <p class="comment-text">{{ comment.content }}</p>
+            <div class="comment-actions">
+              <button class="like-btn" 
+                      [class.liked]="comment.isLiked"
+                      (click)="likeComment(comment.id)">
+                👍 {{ comment.likes }}
+              </button>
+            </div>
+          </div>
+
+          <div *ngIf="comments.length === 0" class="empty-comments">
+            <p>Aucun commentaire pour le moment. Soyez le premier à commenter!</p>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

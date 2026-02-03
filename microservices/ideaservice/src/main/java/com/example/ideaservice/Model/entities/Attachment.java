@@ -1,5 +1,7 @@
 package com.example.ideaservice.Model.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.Date;
@@ -23,6 +25,14 @@ public class Attachment {
     @Column(nullable = false)
     private String fileType;
 
+    @Lob
+    @Basic(fetch = FetchType.LAZY)
+    @JsonIgnore
+    private byte[] data;
+
+    // Absolute path on the server filesystem
+    private String filePath;
+
     private String fileUrl;
     private Long fileSize;
     private Date uploadDate;
@@ -30,5 +40,6 @@ public class Attachment {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idea_id", nullable = false)
+    @JsonBackReference
     private Idea idea;
 }

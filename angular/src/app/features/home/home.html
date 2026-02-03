@@ -11,7 +11,7 @@
       La plateforme collaborative qui connecte les visionnaires, les entreprises et les talents pour bâtir le monde de demain.
     </p>
     <div class="flex flex-col sm:flex-row gap-4 justify-center">
-      <a href="#" class="btn-primary text-white px-10 py-4 rounded-full text-lg font-bold">
+        <a routerLink="/auth" [queryParams]="{ action: 'register' }" class="btn-primary text-white px-10 py-4 rounded-full text-lg font-bold">
         Rejoindre la communauté
       </a>
     </div>
@@ -51,7 +51,7 @@
       <div class="absolute -top-10 -left-10 w-64 h-64 bg-[#915506] opacity-20 blur-[100px]"></div>
       <h2 class="text-4xl md:text-5xl font-bold mb-8 leading-tight">Notre mission : Libérer le potentiel créatif</h2>
       <p class="text-slate-400 text-lg mb-6 leading-relaxed">
-        InnovHub n'est pas qu'un outil de gestion, c'est un écosystème conçu pour briser les silos au sein des organisations.
+        PinBoard n'est pas qu'un outil de gestion, c'est un écosystème conçu pour briser les silos au sein des organisations.
       </p>
       <ul class="space-y-4">
         <li class="flex items-center gap-3">
@@ -82,7 +82,7 @@
         <h3 class="font-bold text-lg mb-2">Organisation</h3>
         <p class="text-slate-500 text-sm mb-6">Pilotez l'innovation stratégique et impliquez vos collaborateurs.</p>
       </div>
-      <a href="#" class="text-[#915506] font-bold text-sm group-hover:underline">Créer un compte →</a>
+      <a routerLink="/auth" [queryParams]="{ action: 'register', type: 'organization' }" class="text-[#915506] font-bold text-sm group-hover:underline">Créer un compte →</a>
     </div>
 
     <div class="bg-white p-8 rounded-3xl border border-slate-100 flex flex-col justify-between hover:shadow-xl transition-all group">
@@ -91,7 +91,7 @@
         <h3 class="font-bold text-lg mb-2">Startup</h3>
         <p class="text-slate-500 text-sm mb-6">Collaborez avec des grands comptes et accélérez votre croissance.</p>
       </div>
-      <a href="#" class="text-[#915506] font-bold text-sm group-hover:underline">Rejoindre le hub →</a>
+      <a routerLink="/auth" [queryParams]="{ action: 'register', type: 'startup' }" class="text-[#915506] font-bold text-sm group-hover:underline">Rejoindre le hub →</a>
     </div>
 
     <div class="bg-white p-8 rounded-3xl border border-slate-100 flex flex-col justify-between hover:shadow-xl transition-all group">
@@ -100,7 +100,7 @@
         <h3 class="font-bold text-lg mb-2">Individu</h3>
         <p class="text-slate-500 text-sm mb-6">Participez à des challenges et proposez vos propres idées.</p>
       </div>
-      <a href="#" class="text-[#915506] font-bold text-sm group-hover:underline">S'inscrire →</a>
+      <a routerLink="/auth" [queryParams]="{ action: 'register', type: 'individual' }" class="text-[#915506] font-bold text-sm group-hover:underline">S'inscrire →</a>
     </div>
 
     <div class="bg-orange-50 p-8 rounded-3xl border border-orange-100 flex flex-col justify-between transition-all">
@@ -109,7 +109,7 @@
         <h3 class="font-bold text-lg mb-2">Accès membre</h3>
         <p class="text-slate-600 text-sm mb-6">Accédez à votre tableau de bord personnalisé.</p>
       </div>
-      <a href="#" class="bg-white text-center py-3 rounded-xl shadow-sm font-bold text-[#915506] hover:bg-orange-100 transition-colors">Se connecter</a>
+      <a routerLink="/auth" class="bg-white text-center py-3 rounded-xl shadow-sm font-bold text-[#915506] hover:bg-orange-100 transition-colors">Se connecter</a>
     </div>
 
   </div>
@@ -120,7 +120,7 @@
     <div class="relative z-10">
       <h2 class="text-3xl md:text-5xl font-extrabold mb-6">Prêt à innover autrement ?</h2>
       <p class="text-orange-100 text-lg mb-10 opacity-90">Rejoignez des milliers d'innovateurs déjà présents sur la plateforme.</p>
-      <a href="#" class="bg-white text-[#915506] px-12 py-4 rounded-full text-lg font-bold hover:scale-105 transition-transform inline-block">
+      <a routerLink="/auth" [queryParams]="{ action: 'register' }" class="bg-white text-[#915506] px-12 py-4 rounded-full text-lg font-bold hover:scale-105 transition-transform inline-block">
         Commencer maintenant
       </a>
     </div>

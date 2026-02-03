@@ -1,0 +1,32 @@
+<!-- votes-toolbar.component.html -->
+<div class="votes-toolbar">
+
+  <!-- Left -->
+  <div class="toolbar-left">
+    <div class="title-icon">{{ icon }}</div>
+    <h2>{{ title }}</h2>
+  </div>
+
+  <!-- Right -->
+  <div class="toolbar-right">
+
+    <!-- Status filter -->
+    <select class="status-select">
+      <option value="">Le statut</option>
+      <option value="APPROVED">Approuvé</option>
+      <option value="IN_REVIEW">En revue</option>
+      <option value="REJECTED">Rejeté</option>
+    </select>
+
+    <!-- Filter icon -->
+    <button class="icon-button">
+      ⚲
+    </button>
+
+    <!-- Add button -->
+    <button class="add-button">
+      +
+    </button>
+
+  </div>
+</div>

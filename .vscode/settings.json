@@ -1,0 +1,6 @@
+{
+    "discord.removeDetails": true,
+    "discord.removeLowerDetails": true,
+    "discord.removeRemoteRepository": true,
+    "java.compile.nullAnalysis.mode": "automatic"
+}

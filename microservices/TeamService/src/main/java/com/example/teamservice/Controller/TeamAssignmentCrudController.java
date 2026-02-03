@@ -24,7 +24,6 @@ import java.util.List;
 @RequestMapping("/api/teams")
 @RequiredArgsConstructor
 @Tag(name = "Team Assignments CRUD", description = "APIs pour la gestion des affectations d'équipe")
-@CrossOrigin(origins = "*")
 public class TeamAssignmentCrudController {
 
     private final TeamAssignmentService service;

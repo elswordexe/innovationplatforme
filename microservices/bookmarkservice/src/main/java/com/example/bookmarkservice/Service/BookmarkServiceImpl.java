@@ -77,11 +77,45 @@ public class BookmarkServiceImpl implements BookmarkService {
     }
 
     @Override
-    public void removeBookmark(Long bookmarkId) {
-        if (!repository.existsById(bookmarkId)) {
-            throw new BookmarkNotFoundException("Bookmark not found");
+    public void removeBookmark(Long bookmarkId, Long currentUserId) {
+        Bookmark bookmark = repository.findById(bookmarkId)
+                .orElseThrow(() -> new BookmarkNotFoundException("Bookmark not found"));
+        if (!bookmark.getUserId().equals(currentUserId)) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.FORBIDDEN,
+                    "You can only delete your own bookmarks");
         }
         repository.deleteById(bookmarkId);
         // No notification on remove (per requirements)
+    }
+
+    @Override
+    public BookmarkDto updateBookmark(Long id, BookmarkDto dto, String actorName) {
+        Bookmark existingBookmark = repository.findById(id)
+                .orElseThrow(() -> new BookmarkNotFoundException("Bookmark not found"));
+        
+        if (!existingBookmark.getUserId().equals(dto.getUserId())) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.FORBIDDEN,
+                    "You can only update your own bookmarks");
+        }
+        
+        // Update idea ID if provided
+        if (dto.getIdeaId() != null) {
+            existingBookmark.setIdeaId(dto.getIdeaId());
+        }
+        
+        Bookmark updatedBookmark = repository.save(existingBookmark);
+        return mapper.toDto(updatedBookmark);
+    }
+
+    @Override
+    public long countBookmarksByIdea(Long ideaId) {
+        return repository.countByIdeaId(ideaId);
+    }
+
+    @Override
+    public boolean hasBookmarked(Long userId, Long ideaId) {
+        return repository.existsByUserIdAndIdeaId(userId, ideaId);
     }
 }

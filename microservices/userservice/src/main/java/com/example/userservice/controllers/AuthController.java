@@ -55,6 +55,15 @@ public class AuthController {
         java.util.Map<String, Object> extraClaims = new java.util.HashMap<>();
         extraClaims.put("userId", user.getId());
         extraClaims.put("role", user.getRole());
+        if (user.getTenantId() != null) {
+            extraClaims.put("tenantId", user.getTenantId());
+        }
+        if (user.getTenantType() != null) {
+            extraClaims.put("tenantType", user.getTenantType().name());
+        }
+        if (user.getEntityType() != null) {
+            extraClaims.put("entityType", user.getEntityType().name());
+        }
         
         String token = jwtService.generateToken(extraClaims, userDetails);
 
@@ -62,6 +71,9 @@ public class AuthController {
                 .token(token)
                 .role(user.getRole())
                 .userId(user.getId())
+                .tenantId(user.getTenantId())
+                .tenantType(user.getTenantType() != null ? user.getTenantType().name() : null)
+                .entityType(user.getEntityType() != null ? user.getEntityType().name() : null)
                 .build());
     }
 }
