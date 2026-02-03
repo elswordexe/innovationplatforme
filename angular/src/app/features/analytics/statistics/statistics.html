@@ -1,0 +1,141 @@
+<div class="statistics-container flex-1 relative">
+  <div class="statistics-header">
+    <h1>Statistics</h1>
+  </div>
+
+  <!-- Stat Cards Row -->
+  <div class="stat-cards-grid">
+    <div class="stat-card" *ngFor="let card of statCards">
+      <div class="stat-card-header">
+        <span class="stat-label">{{ card.label }}</span>
+        <button class="stat-menu-btn">⋮</button>
+      </div>
+      <div class="stat-value">{{ card.value }}</div>
+      <div class="stat-change" [class.positive]="card.isPositive" [class.negative]="!card.isPositive">
+        {{ card.change }}
+      </div>
+      <div class="stat-subtitle">{{ card.subtitle }}</div>
+    </div>
+  </div>
+
+  <!-- Charts Row -->
+  <div class="charts-row">
+    <!-- Profile Impressions Chart -->
+    <div class="chart-card impressions-chart">
+      <div class="chart-header">
+        <h3>Impressions du profil</h3>
+        <select class="chart-select" [(ngModel)]="selectedPeriod">
+          <option>Hebdomadaire</option>
+          <option>Mensuel</option>
+          <option>Annuel</option>
+        </select>
+      </div>
+
+      <div class="chart-legend">
+        <div class="legend-item">
+          <span class="legend-color" style="background: #8B5A2B;"></span>
+          <span>Comptes engagés</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-color" style="background: #FF8534;"></span>
+          <span>Activité du profil</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-color" style="background: #A4D65E;"></span>
+          <span>Comptes atteints</span>
+        </div>
+      </div>
+
+      <div class="bar-chart">
+        <div class="bar-chart-y-axis">
+          <span>50K</span>
+          <span>40K</span>
+          <span>30K</span>
+          <span>20K</span>
+          <span>10K</span>
+          <span>0K</span>
+        </div>
+        <div class="bar-chart-content">
+          <div class="bar-group" *ngFor="let data of profileImpressions">
+            <div class="stacked-bar">
+              <div class="bar-segment comptes"
+                   [style.height.%]="getBarHeight(data.comptes)"
+                   [attr.data-value]="data.comptes"></div>
+              <div class="bar-segment activite"
+                   [style.height.%]="getBarHeight(data.activite)"
+                   [attr.data-value]="data.activite"></div>
+              <div class="bar-segment attentes"
+                   [style.height.%]="getBarHeight(data.attentes)"
+                   [attr.data-value]="data.attentes"></div>
+            </div>
+            <span class="bar-label">{{ data.month }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Audience Reached Chart -->
+    <div class="chart-card audience-chart">
+      <div class="chart-header">
+        <h3>Audience atteinte</h3>
+        <button class="chart-menu-btn">⋮</button>
+      </div>
+
+      <div class="audience-circle">
+        <svg class="donut-chart" viewBox="0 0 240 240">
+          <defs>
+            <!-- Filtre pour l'ombre -->
+            <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+              <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.15"/>
+            </filter>
+          </defs>
+
+          <!-- Cercle de fond gris clair -->
+          <circle cx="120" cy="120" r="90" fill="none" stroke="#e5e7eb" stroke-width="28"/>
+
+          <!-- Premier cercle ORANGE (60%) -->
+          <circle cx="120" cy="120" r="90"
+                  fill="none"
+                  stroke="#FF8534"
+                  stroke-width="28"
+                  stroke-dasharray="339.29 565.48"
+                  stroke-dashoffset="0"
+                  transform="rotate(-90 120 120)"
+                  stroke-linecap="round"
+                  filter="url(#shadow)"
+                  class="donut-segment-orange"/>
+
+          <!-- Deuxième cercle VERT (40%) -->
+          <circle cx="120" cy="120" r="90"
+                  fill="none"
+                  stroke="#A4D65E"
+                  stroke-width="28"
+                  stroke-dasharray="226.19 565.48"
+                  stroke-dashoffset="-339.29"
+                  transform="rotate(-90 120 120)"
+                  stroke-linecap="round"
+                  filter="url(#shadow)"
+                  class="donut-segment-green"/>
+
+          <!-- Texte au centre -->
+          <text x="120" y="108" text-anchor="middle" class="audience-label-svg">Audience totale</text>
+          <text x="120" y="138" text-anchor="middle" class="audience-value-svg">{{ audienceReached | number }}</text>
+        </svg>
+      </div>
+
+      <div class="audience-legend">
+        <div class="legend-item">
+          <span class="legend-color-circle" style="background: #FF8534;"></span>
+          <span>60%</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-color-circle" style="background: #A4D65E;"></span>
+          <span>40%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Row -->
+  
+</div>

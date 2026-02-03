@@ -1,0 +1,30 @@
+<!-- LAYOUT GLOBAL -->
+<div class="flex min-h-screen">
+
+  <!-- SIDEBAR (GAUCHE, HAUTEUR COMPLÈTE) -->
+  <app-sidebar class="w-64 flex-shrink-0"></app-sidebar>
+
+  <!-- ZONE DROITE -->
+  <div class="flex-1 flex flex-col ml-64">
+
+    <!-- NAVBAR (EN HAUT, SANS ESPACE) -->
+    <app-navbside></app-navbside>
+
+    <div class="page-layout">
+      <div class="bookmarks-container">
+    <app-toolbar [title]="'Mes favoris'" [icon]="'🔖'"></app-toolbar>
+
+    <div class="ideas-grid">
+    <app-bookmarked-idea-card
+      *ngFor="let idea of bookmarkedIdeas"
+      [idea]="idea">
+    </app-bookmarked-idea-card>
+  </div>
+
+    <div *ngIf="bookmarkedIdeas.length === 0" class="empty-state">
+      <p>Vous n'avez enregistré aucune idée pour le moment.</p>
+    </div>
+      </div>
+    </div>
+  </div>
+</div>

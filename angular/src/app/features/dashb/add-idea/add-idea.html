@@ -1,0 +1,122 @@
+<div class="add-idea-container glass fade-in">
+
+  <!-- Header -->
+  <div class="form-header">
+    <div class="form-icon">💡</div>
+    <div>
+      <h2 class="form-title">Ajouter une nouvelle idée</h2>
+      <p class="form-subtitle">
+        Partagez une idée claire pour la soumettre à la communauté
+      </p>
+    </div>
+  </div>
+
+  <form [formGroup]="ideaForm" (ngSubmit)="submitIdea()" class="idea-form">
+
+    <!-- Error Message -->
+    <div class="error-message" *ngIf="errorMessage">
+      ❌ {{ errorMessage }}
+    </div>
+
+    <!-- Titre -->
+    <div class="form-group">
+      <label>Titre</label>
+      <input
+        class="apple-input"
+        type="text"
+        formControlName="title"
+        placeholder="Titre de l'idée"
+      />
+    </div>
+
+    <!-- Description -->
+    <div class="form-group">
+      <label>Description</label>
+      <textarea
+        class="apple-input"
+        formControlName="description"
+        placeholder="Décrivez votre idée"
+        rows="5">
+      </textarea>
+    </div>
+
+    <!-- Categorie -->
+    <div class="form-group">
+      <label>Catégorie</label>
+      <select class="apple-input" formControlName="category">
+        <option>Général</option>
+        <option>Innovation</option>
+        <option>Projet</option>
+        <option>Autre</option>
+      </select>
+    </div>
+
+
+    <!-- Image -->
+    <div class="form-group">
+      <label>Image de couverture (optionnel)</label>
+
+      <label class="file-upload">
+        <input
+          type="file"
+          (change)="onFileSelected($event)"
+          accept="image/*"
+        />
+        <span>📷 Choisir une image</span>
+      </label>
+
+      <p class="text-xs text-[var(--text-muted)]">Formats: JPG/PNG/WebP</p>
+
+      <div class="image-preview" *ngIf="imagePreview">
+        <img [src]="imagePreview" alt="Preview" />
+        <button type="button" class="remove-btn" (click)="imagePreview = null; imageFile = null" style="position:absolute; right:12px; top:12px;">✕</button>
+      </div>
+    </div>
+
+    <!-- Attachments -->
+    <div class="form-group">
+      <label>Attachements (fichiers supplémentaires)</label>
+
+      <label class="file-upload">
+        <input
+          type="file"
+          (change)="onAttachmentSelected($event)"
+          accept="*"
+          multiple
+        />
+        <span>📎 Ajouter des fichiers</span>
+      </label>
+
+      <p class="text-xs text-[var(--text-muted)]">Vous pouvez joindre plusieurs fichiers (PDF, DOCX, images, etc.)</p>
+
+      <div class="attachments-list" *ngIf="attachments.length > 0">
+        <div class="attachment-item" *ngFor="let att of attachments; let i = index">
+          <span class="file-icon">📄</span>
+          <span class="file-name">{{ att.name }}</span>
+          <button type="button" class="remove-btn" (click)="removeAttachment(i)">✕</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Priorité -->
+    <div class="form-group">
+      <label>Priorité</label>
+      <select class="apple-input" formControlName="priority">
+        <option>Haute</option>
+        <option>Moyenne</option>
+        <option>Basse</option>
+      </select>
+    </div>
+
+    <!-- Submit -->
+    <div class="form-actions">
+      <button
+        type="submit"
+        class="apple-button"
+        [disabled]="ideaForm.invalid || isSubmitting">
+        {{ isSubmitting ? 'Création...' : 'Ajouter l\'idée' }}
+      </button>
+    </div>
+
+  </form>
+</div>

@@ -1,0 +1,40 @@
+.analytics-container {
+  padding: 2rem;
+}
+
+.analytics-header {
+  margin-bottom: 2rem;
+}
+
+.analytics-header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary, #0f172a);
+  margin-bottom: 1rem;
+}
+
+.analytics-tabs {
+  display: flex;
+  gap: 1rem;
+  border-bottom: 1px solid var(--border-light, rgba(0, 0, 0, 0.08));
+  padding-bottom: 1rem;
+}
+
+.analytics-tab {
+  padding: 0.75rem 1.5rem;
+  color: var(--text-muted, #64748b);
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.analytics-tab:hover {
+  color: var(--text-primary, #0f172a);
+}
+
+.analytics-tab.active {
+  color: var(--brand, #915506);
+  border-bottom-color: var(--brand, #915506);
+}

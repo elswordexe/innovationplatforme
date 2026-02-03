@@ -1,0 +1,95 @@
+<!-- LAYOUT GLOBAL -->
+<div class="flex min-h-screen">
+
+  <!-- SIDEBAR (GAUCHE, HAUTEUR COMPLÈTE) -->
+  <app-sidebar class="w-64 flex-shrink-0"></app-sidebar>
+
+  <!-- ZONE DROITE -->
+  <div class="flex-1 flex flex-col ml-64">
+
+    <!-- NAVBAR (EN HAUT, SANS ESPACE) -->
+    <app-navbside></app-navbside>
+
+    <div class="page-layout">
+      <div class="votes-container">
+    <app-toolbar [title]="'Mes votes'" [icon]="'🗳️'"></app-toolbar>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-state">
+      <div class="loading-header">
+        <div class="skeleton-text skeleton-title"></div>
+        <div class="skeleton-text skeleton-subtitle"></div>
+      </div>
+      <div class="ideas-grid">
+        <div class="skeleton-card" *ngFor="let i of [1,2,3,4,5,6]">
+          <div class="skeleton-image"></div>
+          <div class="skeleton-content">
+            <div class="skeleton-text skeleton-card-title"></div>
+            <div class="skeleton-text skeleton-card-text"></div>
+            <div class="skeleton-text skeleton-card-text"></div>
+            <div class="skeleton-meta">
+              <div class="skeleton-badge"></div>
+              <div class="skeleton-badge"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error && !isLoading" class="error-state">
+      <div class="error-icon">⚠️</div>
+      <h3>Une erreur est survenue</h3>
+      <p>{{ error }}</p>
+      <button class="retry-button" (click)="loadVotedIdeas()">
+        Réessayer
+      </button>
+    </div>
+
+    <!-- Content -->
+    <div *ngIf="!isLoading && !error">
+      <div class="votes-header">
+        <div class="header-content">
+          <div>
+            <h1>Mes votes</h1>
+            <p class="votes-subtitle">{{ votedIdeas.length }} idée{{ votedIdeas.length > 1 ? 's' : '' }} votée{{ votedIdeas.length > 1 ? 's' : '' }}</p>
+          </div>
+          <div class="header-actions">
+            <select class="filter-select" (change)="onSortChange($event)">
+              <option value="date">Trier par date</option>
+              <option value="score">Trier par score</option>
+              <option value="votes">Trier par votes</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="ideas-grid" *ngIf="votedIdeas.length > 0">
+        <app-voted-idea-card
+          *ngFor="let idea of votedIdeas"
+          [idea]="idea"
+          (cardClick)="viewIdea($event)">
+        </app-voted-idea-card>
+      </div>
+
+      <div *ngIf="votedIdeas.length === 0" class="empty-state">
+        <div class="empty-icon">🗳️</div>
+        <h3>Aucun vote pour le moment</h3>
+        <p *ngIf="hasOrganization">
+          Vous n'avez pas encore voté pour des idées de votre organisation. Découvrez les idées proposées par votre équipe et participez à l'innovation !
+        </p>
+        <p *ngIf="isIndividualUser">
+          Vous n'avez pas encore rejoint d'organisation. <a href="/post-registration" class="join-link">Rejoindre une organisation</a> pour voter et voir les idées de votre équipe.
+        </p>
+        <button class="cta-button" (click)="navigateToIdeas()" *ngIf="hasOrganization">
+          Découvrir les idées
+        </button>
+        <button class="cta-button" (click)="navigateToJoin()" *ngIf="isIndividualUser">
+          Rejoindre une organisation
+        </button>
+      </div>
+    </div>
+      </div>
+    </div>
+  </div>
+</div>

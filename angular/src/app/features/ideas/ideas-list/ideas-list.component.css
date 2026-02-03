@@ -1,0 +1,86 @@
+/* Styles pour la page All Ideas */
+
+.stat-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s duration;
+  color: #475569;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.stat-btn:hover {
+  background-color: #f1f5f9;
+}
+
+.stat-btn.has-voted {
+  background-color: #915506;
+  color: white;
+}
+
+.stat-btn.has-voted:hover {
+  background-color: #7a4605;
+}
+
+.stat-btn.bookmarked {
+  background-color: #915506;
+  color: white;
+}
+
+.stat-btn.bookmarked:hover {
+  background-color: #7a4605;
+}
+
+/* Line clamp utilities */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Animation pour le spinner */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

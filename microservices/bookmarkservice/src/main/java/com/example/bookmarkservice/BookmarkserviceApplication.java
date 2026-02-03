@@ -1,0 +1,11 @@
+package com.example.bookmarkservice;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class BookmarkserviceApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(BookmarkserviceApplication.class, args);
+    }
+}
