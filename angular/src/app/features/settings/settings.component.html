@@ -1,0 +1,143 @@
+<div class="flex min-h-screen bg-slate-50">
+    <!-- Sidebar de gauche -->
+    <app-sidebar></app-sidebar>
+
+    <!-- Contenu principal -->
+    <div class="flex-1 lg:pl-64">
+        <div class="py-10 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
+
+            <!-- Header Section -->
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-slate-900">Settings</h1>
+                <p class="text-slate-500 mt-1">Gérez vos préférences et informations personnelles</p>
+            </div>
+
+            <!-- Main Layout Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+                <!-- Sidebar Interne (Menu Settings) -->
+                <div class="lg:col-span-3">
+                    <nav class="space-y-1">
+                        <button
+                            class="w-full flex items-center px-4 py-3 text-sm font-medium rounded-xl bg-white text-[var(--brand)] shadow-sm border border-slate-100 transition-all">
+                            <span class="mr-3">👤</span> Profile
+                        </button>
+                        <button
+                            class="w-full flex items-center px-4 py-3 text-sm font-medium rounded-xl text-slate-600 hover:bg-white hover:text-[var(--brand)] transition-all">
+                            <span class="mr-3">💳</span> Account
+                        </button>
+                        <button
+                            class="w-full flex items-center px-4 py-3 text-sm font-medium rounded-xl text-slate-400 cursor-not-allowed opacity-60">
+                            <span class="mr-3">🛡️</span> Security
+                        </button>
+                        <button
+                            class="w-full flex items-center px-4 py-3 text-sm font-medium rounded-xl text-slate-400 cursor-not-allowed opacity-60">
+                            <span class="mr-3">🔔</span> Notifications
+                        </button>
+                    </nav>
+                </div>
+
+                <!-- Content Area -->
+                <div class="lg:col-span-9">
+
+                    <div *ngIf="loading()" class="py-20 text-center">
+                        <div
+                            class="inline-block w-8 h-8 border-4 border-[#915506]/20 border-t-[#915506] rounded-full animate-spin mb-4">
+                        </div>
+                        <p class="text-slate-500">Chargement de votre profil...</p>
+                    </div>
+
+                    <div *ngIf="!loading() && user()"
+                        class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                        <!-- Profile Header Card -->
+                        <div class="p-8 border-b border-slate-50 bg-slate-50/30">
+                            <div class="flex flex-col sm:flex-row items-center gap-6">
+                                <div class="relative group">
+                                    <img [src]="user()?.profilePhotoUrl || 'https://ui-avatars.com/api/?name=' + user()?.fullname + '&background=915506&color=fff'"
+                                        alt="Avatar"
+                                        class="w-24 h-24 rounded-2xl object-cover shadow-md border-2 border-white">
+                                    <button
+                                        class="absolute -bottom-2 -right-2 bg-white p-2 rounded-lg shadow-sm border border-slate-100 text-slate-600 hover:text-[var(--brand)] transition-colors">
+                                        📷
+                                    </button>
+                                </div>
+                                <div class="text-center sm:text-left">
+                                    <h2 class="text-xl font-bold text-slate-800">{{ user()?.fullname }}</h2>
+                                    <p class="text-slate-500 font-medium">{{ user()?.role }}</p>
+                                    <div class="mt-2 flex items-center justify-center sm:justify-start gap-2">
+                                        <span
+                                            class="px-2 py-1 bg-[#915506]/10 text-[#915506] text-[10px] font-bold rounded uppercase tracking-wider">
+                                            {{ user()?.organizationName }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Profile Form -->
+                        <div class="p-8">
+                            <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="space-y-6">
+
+                                <div *ngIf="message()"
+                                    [ngClass]="message()?.type === 'success' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-red-50 text-red-700 border-red-100'"
+                                    class="p-4 rounded-xl border flex items-center gap-3 animate-in fade-in duration-300">
+                                    <span>{{ message()?.type === 'success' ? '✅' : '❌' }}</span>
+                                    {{ message()?.text }}
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <!-- Full Name -->
+                                    <div class="space-y-1.5">
+                                        <label class="text-sm font-semibold text-slate-700">Full Name</label>
+                                        <input type="text" formControlName="fullname"
+                                            class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-4 focus:ring-[#915506]/10 focus:border-[#915506] outline-none transition-all"
+                                            [class.border-red-300]="profileForm.get('fullname')?.invalid && profileForm.get('fullname')?.touched">
+                                        <p *ngIf="profileForm.get('fullname')?.invalid && profileForm.get('fullname')?.touched"
+                                            class="text-xs text-red-500">
+                                            Le nom doit faire au moins 3 caractères.
+                                        </p>
+                                    </div>
+
+                                    <!-- Email -->
+                                    <div class="space-y-1.5">
+                                        <label class="text-sm font-semibold text-slate-700">Email Address</label>
+                                        <input type="email" formControlName="email"
+                                            class="w-full px-4 py-2.5 rounded-xl border border-slate-100 bg-slate-50 text-slate-400 cursor-not-allowed outline-none">
+                                    </div>
+
+                                    <!-- Role -->
+                                    <div class="space-y-1.5">
+                                        <label class="text-sm font-semibold text-slate-700">Role</label>
+                                        <input type="text" formControlName="role"
+                                            class="w-full px-4 py-2.5 rounded-xl border border-slate-100 bg-slate-50 text-slate-400 cursor-not-allowed outline-none">
+                                    </div>
+
+                                    <!-- Organization -->
+                                    <div class="space-y-1.5">
+                                        <label class="text-sm font-semibold text-slate-700">Organization</label>
+                                        <input type="text" formControlName="organizationName"
+                                            class="w-full px-4 py-2.5 rounded-xl border border-slate-100 bg-slate-50 text-slate-400 cursor-not-allowed outline-none">
+                                    </div>
+                                </div>
+
+                                <div class="pt-6 border-t border-slate-50 flex items-center justify-end gap-4">
+                                    <button type="button"
+                                        class="px-6 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 transition-colors">
+                                        Cancel
+                                    </button>
+                                    <button type="submit" [disabled]="profileForm.invalid || saveLoading()"
+                                        class="px-8 py-2.5 rounded-xl text-sm font-bold text-white bg-[#915506] hover:bg-[#7a4605] transition-all shadow-md shadow-[#915506]/20 disabled:opacity-50 flex items-center gap-2">
+                                        <span *ngIf="saveLoading()"
+                                            class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                                        {{ saveLoading() ? 'Saving...' : 'Save changes' }}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -42,7 +42,7 @@ public class IdeaMapperImpl implements IdeaMapper {
     @Override
     public List<IdeaDTO> toDTOList(List<Idea> ideas) {
         if (ideas == null) {
-            return null;
+            return List.of();
         }
 
         return ideas.stream()

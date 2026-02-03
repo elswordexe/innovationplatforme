@@ -24,18 +24,19 @@ public class SecurityConfig {
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
         http
-            .csrf(ServerHttpSecurity.CsrfSpec::disable)
-            .authorizeExchange(exchanges -> exchanges
-                .pathMatchers(
-                        "/v3/api-docs/**",
-                        "/swagger-ui.html",
-                        "/swagger-ui/**",
-                        "/actuator/**",
-                        "/api/auth/**"
-                ).permitAll()
-                .anyExchange().authenticated()
-            )
-            .oauth2ResourceServer(oauth2 -> oauth2.jwt(customizer -> customizer.jwtDecoder(jwtDecoder())));
+                .csrf(ServerHttpSecurity.CsrfSpec::disable)
+                .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
+                .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
+                .authorizeExchange(exchanges -> exchanges
+                        .pathMatchers(
+                                "/v3/api-docs/**",
+                                "/swagger-ui.html",
+                                "/swagger-ui/**",
+                                "/actuator/**",
+                                "/api/auth/**")
+                        .permitAll()
+                        .anyExchange().authenticated())
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(customizer -> customizer.jwtDecoder(jwtDecoder())));
 
         return http.build();
     }
@@ -49,25 +50,32 @@ public class SecurityConfig {
 
     @Bean
     public GlobalFilter propagateUserHeadersFilter() {
-        return (exchange, chain) -> exchange.getPrincipal()
-            .cast(AbstractAuthenticationToken.class)
-            .flatMap(auth -> {
-                Object principal = auth.getPrincipal();
-                if (principal instanceof Jwt jwt) {
-                    String username = jwt.getSubject();
-                    Object userId = jwt.getClaims().get("userId");
-                    Object role = jwt.getClaims().get("role");
-                    var mutated = exchange.getRequest().mutate()
-                            .header("X-User-Name", username != null ? username : "")
-                            .headers(h -> {
-                                if (userId != null) h.set("X-User-Id", String.valueOf(userId));
-                                if (role != null) h.set("X-User-Role", String.valueOf(role));
-                            })
-                            .build();
-                    return chain.filter(exchange.mutate().request(mutated).build());
-                }
-                return chain.filter(exchange);
-            })
-            .switchIfEmpty(chain.filter(exchange));
+        return (exchange, chain) -> {
+            return exchange.getPrincipal()
+                    .filter(principal -> principal instanceof AbstractAuthenticationToken)
+                    .cast(AbstractAuthenticationToken.class)
+                    .flatMap(auth -> {
+                        Object principal = auth.getPrincipal();
+                        if (principal instanceof Jwt jwt) {
+                            String username = jwt.getSubject();
+                            Object userId = jwt.getClaims().get("userId");
+                            Object role = jwt.getClaims().get("role");
+
+                            var mutated = exchange.getRequest().mutate()
+                                    .header("X-User-Name", username != null ? username : "")
+                                    .headers(h -> {
+                                        if (userId != null)
+                                            h.set("X-User-Id", String.valueOf(userId));
+                                        if (role != null)
+                                            h.set("X-User-Role", String.valueOf(role));
+                                    })
+                                    .build();
+
+                            return chain.filter(exchange.mutate().request(mutated).build());
+                        }
+                        return chain.filter(exchange);
+                    })
+                    .switchIfEmpty(chain.filter(exchange));
+        };
     }
 }

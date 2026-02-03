@@ -32,8 +32,7 @@ public class UserController {
     @PostMapping
     @Operation(summary = "Créer un utilisateur")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Utilisateur créé",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class))),
+            @ApiResponse(responseCode = "201", description = "Utilisateur créé", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class))),
             @ApiResponse(responseCode = "400", description = "Données invalides", content = @Content)
     })
     public ResponseEntity<UserDTO> create(@Valid @RequestBody UserCreateRequest request) {
@@ -44,12 +43,12 @@ public class UserController {
     @GetMapping("/{id}")
     @Operation(summary = "Récupérer un utilisateur par ID")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Utilisateur trouvé",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class))),
+            @ApiResponse(responseCode = "200", description = "Utilisateur trouvé", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class))),
             @ApiResponse(responseCode = "404", description = "Utilisateur non trouvé", content = @Content)
     })
-    public ResponseEntity<UserDTO> getById(@Parameter(description = "ID de l'utilisateur", required = true, example = "1")
-                                           @PathVariable Long id) throws ResourceNotFoundException {
+    public ResponseEntity<UserDTO> getById(
+            @Parameter(description = "ID de l'utilisateur", required = true, example = "1") @PathVariable Long id)
+            throws ResourceNotFoundException {
         return ResponseEntity.ok(userService.getById(id));
     }
 
@@ -62,11 +61,11 @@ public class UserController {
     @PutMapping("/{id}")
     @Operation(summary = "Mettre à jour un utilisateur")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Utilisateur mis à jour",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class))),
+            @ApiResponse(responseCode = "200", description = "Utilisateur mis à jour", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class))),
             @ApiResponse(responseCode = "404", description = "Utilisateur non trouvé", content = @Content)
     })
-    public ResponseEntity<UserDTO> update(@PathVariable Long id, @Valid @RequestBody UserUpdateRequest request) throws ResourceNotFoundException {
+    public ResponseEntity<UserDTO> update(@PathVariable Long id, @Valid @RequestBody UserUpdateRequest request)
+            throws ResourceNotFoundException {
         return ResponseEntity.ok(userService.update(id, request));
     }
 
@@ -104,5 +103,17 @@ public class UserController {
     public ResponseEntity<String> health() {
         return ResponseEntity.ok("User Service is running!");
     }
-}
 
+    @GetMapping("/me")
+    @Operation(summary = "Récupérer le profil de l'utilisateur connecté")
+    public ResponseEntity<UserDTO> getMe(@RequestHeader("X-User-Id") Long userId) throws ResourceNotFoundException {
+        return ResponseEntity.ok(userService.getById(userId));
+    }
+
+    @PutMapping("/me")
+    @Operation(summary = "Mettre à jour le profil de l'utilisateur connecté")
+    public ResponseEntity<UserDTO> updateMe(@RequestHeader("X-User-Id") Long userId,
+            @Valid @RequestBody UserUpdateRequest request) throws ResourceNotFoundException {
+        return ResponseEntity.ok(userService.update(userId, request));
+    }
+}
